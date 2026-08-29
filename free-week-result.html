@@ -124,25 +124,33 @@
       </div>
       <div id="panelZones" role="tabpanel" aria-labelledby="tabZones" data-basics-panel="zones" hidden>
         <p class="basics-lead">No watch? Use the talk test. Zone 2 = easy conversation. That is most of your running this week.</p>
-        <ul class="zone-guide">
-          <li><strong>Z1 · Recovery</strong> <span>Walk. Nose breathing. RPE 1–2.</span></li>
-          <li><strong>Z2 · Easy</strong> <span>You can talk. Easy runs. RPE 3–4.</span></li>
-          <li><strong>Z3 · Steady</strong> <span>Short sentences. Quality sessions. RPE 5–6.</span></li>
-          <li><strong>Z4–5 · Hard / max</strong> <span>Few words or none. Not the point of this week.</span></li>
-        </ul>
         <form class="zones-form" data-zones-form>
-          <p class="ex-label" style="margin-top:4px">Set heart-rate zones</p>
-          <p class="muted" style="font-size:.85rem;margin:4px 0 10px">Estimate from age (220 − age), or enter a tested max HR if you have one.</p>
-          <div class="field">
-            <label for="zoneAge">Age</label>
-            <input id="zoneAge" name="age" type="number" min="16" max="90" inputmode="numeric" placeholder="e.g. 34" />
+          <div class="basics-tabs basics-tabs--sub" role="tablist" aria-label="Zone calculator">
+            <button type="button" role="tab" id="tabZoneHr" aria-controls="fieldsHr" aria-selected="true" class="is-on" data-zone-method="hr">Max HR</button>
+            <button type="button" role="tab" id="tabZoneFivek" aria-controls="fieldsFivek" aria-selected="false" data-zone-method="fivek">5K</button>
           </div>
-          <div class="field">
-            <label for="zoneMaxHr">Known max heart rate (optional)</label>
-            <input id="zoneMaxHr" name="maxHr" type="number" min="120" max="230" inputmode="numeric" placeholder="Overrides the age estimate" />
+          <div id="fieldsHr" data-zone-fields="hr">
+            <div class="field">
+              <label for="zoneMaxHr">Max heart rate</label>
+              <input id="zoneMaxHr" name="maxHr" type="number" min="120" max="230" inputmode="numeric" placeholder="e.g. 185" />
+            </div>
+            <p class="muted" style="font-size:.85rem;margin:-6px 0 12px">From a test, a hard race, or your watch. Or use 220 − age.</p>
           </div>
-          <p class="zones-form__error" data-zones-error hidden>Enter an age between 16 and 90, or a max HR between 120 and 230.</p>
-          <button class="btn btn--primary btn--full" type="submit">Set my running zones</button>
+          <div id="fieldsFivek" data-zone-fields="fivek" hidden>
+            <div class="basics-tabs basics-tabs--sub" role="tablist" aria-label="5K input">
+              <button type="button" role="tab" id="tabFivekTime" aria-controls="zoneFivekMin" aria-selected="true" class="is-on" data-fivek-mode="time">Time</button>
+              <button type="button" role="tab" id="tabFivekPace" aria-controls="zoneFivekMin" aria-selected="false" data-fivek-mode="pace">Pace /km</button>
+            </div>
+            <p class="field-label" data-fivek-label>5K time</p>
+            <div class="zones-clock">
+              <input id="zoneFivekMin" name="fivekMin" type="number" min="0" max="45" inputmode="numeric" placeholder="25" aria-label="Minutes" />
+              <span aria-hidden="true">:</span>
+              <input id="zoneFivekSec" name="fivekSec" type="number" min="0" max="59" inputmode="numeric" placeholder="00" aria-label="Seconds" />
+            </div>
+            <p class="muted" style="font-size:.85rem;margin:-4px 0 12px">A recent race or hard time trial, not an easy run.</p>
+          </div>
+          <p class="zones-form__error" data-zones-error hidden>Enter a max HR between 120 and 230, or a 5K between 12:00 and 45:00.</p>
+          <button class="btn btn--primary btn--full" type="submit">Calculate my zones</button>
         </form>
         <div class="zone-results" data-zones-out hidden></div>
       </div>
@@ -153,6 +161,7 @@
   <script src="js/getPlanId.js"></script>
   <script src="js/data/plans.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/zones.js"></script>
   <script src="js/pdf.js"></script>
   <script src="js/app.js"></script>
   <script>EG.initResult()</script>

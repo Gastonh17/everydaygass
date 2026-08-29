@@ -348,44 +348,25 @@ window.EG = (() => {
     if (window.EGPdf) EGPdf.download(plan, state);
   }
 
-  const ZONE_BANDS = [
-    { id: 1, name: "Z1 Recovery", rpe: "RPE 1–2", lo: 0.5, hi: 0.6 },
-    { id: 2, name: "Z2 Easy", rpe: "RPE 3–4", lo: 0.6, hi: 0.7, focus: true },
-    { id: 3, name: "Z3 Steady", rpe: "RPE 5–6", lo: 0.7, hi: 0.8 },
-    { id: 4, name: "Z4 Hard", rpe: "RPE 7–8", lo: 0.8, hi: 0.9 },
-    { id: 5, name: "Z5 Max", rpe: "RPE 9–10", lo: 0.9, hi: 1 }
-  ];
-
-  function estimateMaxHr(age, known) {
-    const maxHr = Number(known);
-    if (maxHr >= 120 && maxHr <= 230) return { maxHr, source: "tested" };
-    const years = Number(age);
-    if (years >= 16 && years <= 90) return { maxHr: Math.round(220 - years), source: "age" };
-    return null;
-  }
-
-  function zoneHint(saved) {
-    if (!saved || !saved.maxHr) return "What RPE means, and how to set your running zones.";
-    const z2 = ZONE_BANDS[1];
-    const lo = Math.round(saved.maxHr * z2.lo);
-    const hi = Math.round(saved.maxHr * z2.hi);
-    return `Z2 easy · ${lo}–${hi} bpm · tap to review RPE and zones.`;
-  }
-
   function renderZoneResults(out, saved) {
-    if (!out || !saved?.maxHr) {
-      if (out) out.hidden = true;
+    const result = window.EGZones?.compute(saved);
+    if (!out || !result) {
+      if (out) {
+        out.hidden = true;
+        out.innerHTML = "";
+      }
       return;
     }
-    const label = saved.source === "tested"
-      ? `From your max HR of ${saved.maxHr} bpm.`
-      : `Estimate from age ${saved.age} · max HR ≈ ${saved.maxHr} bpm (220 − age).`;
     out.hidden = false;
-    out.innerHTML = `<p>${label} Easy running should live in Z2.</p>${ZONE_BANDS.map((z) => {
-      const lo = Math.round(saved.maxHr * z.lo);
-      const hi = Math.round(saved.maxHr * z.hi);
-      return `<div class="zone-row${z.focus ? " is-focus" : ""}"><div><strong>${z.name}</strong><p class="muted" style="font-size:.78rem;margin:0">${z.rpe}</p></div><span>${lo}–${hi} bpm</span></div>`;
-    }).join("")}`;
+    out.innerHTML = `<p>${result.label}</p>${result.bands.map((z) => `
+      <div class="zone-row${z.focus ? " is-focus" : ""}">
+        <div>
+          <strong>${z.name}</strong>
+          <p class="muted" style="font-size:.78rem;margin:0">${z.rpe}</p>
+        </div>
+        <span>${z.display}</span>
+      </div>`).join("")}
+      <button class="btn btn--ghost btn--full" type="button" data-zones-pdf>Download zones PDF</button>`;
   }
 
   function initBasics() {
@@ -397,16 +378,59 @@ window.EG = (() => {
     const form = qs("[data-zones-form]");
     const out = qs("[data-zones-out]");
     const err = qs("[data-zones-error]");
-    const ageInput = qs("#zoneAge");
     const maxInput = qs("#zoneMaxHr");
+    const fivekMin = qs("#zoneFivekMin");
+    const fivekSec = qs("#zoneFivekSec");
+    const fivekLabel = qs("[data-fivek-label]");
+    const methodTabs = qsa("[data-zone-method]");
+    const fivekTabs = qsa("[data-fivek-mode]");
+    const fieldGroups = qsa("[data-zone-fields]");
     const tabs = qsa("[data-basics-tab]");
     const panels = qsa("[data-basics-panel]");
 
+    function currentMethod() {
+      return methodTabs.find((tab) => tab.classList.contains("is-on"))?.dataset.zoneMethod || "hr";
+    }
+
+    function currentFivekMode() {
+      return fivekTabs.find((tab) => tab.classList.contains("is-on"))?.dataset.fivekMode || "time";
+    }
+
+    function showMethod(id) {
+      methodTabs.forEach((tab) => {
+        const on = tab.dataset.zoneMethod === id;
+        tab.classList.toggle("is-on", on);
+        tab.setAttribute("aria-selected", String(on));
+      });
+      fieldGroups.forEach((group) => {
+        group.hidden = group.dataset.zoneFields !== id;
+      });
+    }
+
+    function showFivekMode(mode) {
+      fivekTabs.forEach((tab) => {
+        const on = tab.dataset.fivekMode === mode;
+        tab.classList.toggle("is-on", on);
+        tab.setAttribute("aria-selected", String(on));
+      });
+      if (fivekLabel) fivekLabel.textContent = mode === "pace" ? "Pace /km" : "5K time";
+      if (fivekMin) fivekMin.placeholder = mode === "pace" ? "5" : "25";
+    }
+
     function paintSaved() {
-      const saved = EGStorage.read().runningZones;
-      if (hint) hint.textContent = zoneHint(saved);
-      if (saved?.age && ageInput) ageInput.value = saved.age;
-      if (saved?.maxHr && saved.source === "tested" && maxInput) maxInput.value = saved.maxHr;
+      const saved = window.EGZones?.normalize(EGStorage.read().runningZones);
+      if (hint) hint.textContent = window.EGZones?.hint(saved) || "What RPE means, and how to set your running zones.";
+      if (saved?.method === "hr" && maxInput) maxInput.value = saved.maxHr;
+      if (saved?.method === "fivek") {
+        showMethod("fivek");
+        const mode = saved.fiveKMode || "time";
+        showFivekMode(mode);
+        const clock = mode === "pace" ? saved.fiveKSec / 5 : saved.fiveKSec;
+        if (fivekMin) fivekMin.value = saved.clockMin != null ? saved.clockMin : Math.floor(clock / 60);
+        if (fivekSec) fivekSec.value = saved.clockSec != null ? saved.clockSec : Math.round(clock % 60);
+      } else {
+        showMethod(saved?.method || "hr");
+      }
       renderZoneResults(out, saved);
     }
 
@@ -440,23 +464,39 @@ window.EG = (() => {
       if (e.key === "Escape" && sheet.classList.contains("is-open")) setOpen(false);
     });
     tabs.forEach((tab) => tab.addEventListener("click", () => showTab(tab.dataset.basicsTab)));
+    methodTabs.forEach((tab) => tab.addEventListener("click", () => {
+      if (err) err.hidden = true;
+      showMethod(tab.dataset.zoneMethod);
+    }));
+    fivekTabs.forEach((tab) => tab.addEventListener("click", () => {
+      if (err) err.hidden = true;
+      showFivekMode(tab.dataset.fivekMode);
+    }));
 
     form?.addEventListener("submit", (e) => {
       e.preventDefault();
-      const estimated = estimateMaxHr(ageInput?.value, maxInput?.value);
-      if (!estimated) {
+      const saved = currentMethod() === "fivek"
+        ? window.EGZones?.fromFiveK({ mode: currentFivekMode(), min: fivekMin?.value, sec: fivekSec?.value })
+        : window.EGZones?.fromMaxHr(maxInput?.value);
+      if (!saved) {
         if (err) err.hidden = false;
         return;
       }
       if (err) err.hidden = true;
-      const saved = {
-        ...estimated,
-        age: ageInput?.value ? Number(ageInput.value) : null
-      };
       EGStorage.patch({ runningZones: saved });
-      track("zones_set", { source: saved.source, maxHr: saved.maxHr });
+      track("zones_set", { method: saved.method, maxHr: saved.maxHr || null, fiveKSec: saved.fiveKSec || null });
       paintSaved();
       showTab("zones");
+    });
+
+    out?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-zones-pdf]");
+      if (!btn) return;
+      const saved = window.EGZones?.normalize(EGStorage.read().runningZones);
+      if (saved && window.EGPdf?.downloadZones) {
+        track("zones_pdf_clicked", { method: saved.method });
+        EGPdf.downloadZones(saved);
+      }
     });
 
     paintSaved();

@@ -113,6 +113,8 @@ window.EGPdf = (() => {
   }
 
   function zonesRow(state) {
+    const line = window.EGZones?.summarize(state?.runningZones)?.line;
+    if (line) return `<p class="pdf-zones"><span>Zones</span> ${esc(line)}</p>`;
     const z = state?.runningZones;
     if (!z?.maxHr) return "";
     const z2lo = Math.round(z.maxHr * 0.6);
@@ -517,9 +519,7 @@ window.EGPdf = (() => {
     else setTimeout(go, 450);
   }
 
-  function download(plan, state = {}) {
-    const html = build(plan, state);
-    const title = `EverydayGass-${plan.id}`;
+  function printDoc(html, title) {
     const popup = window.open("", "_blank");
     if (popup) {
       fillWindow(popup, html, title);
@@ -533,5 +533,238 @@ window.EGPdf = (() => {
     setTimeout(() => iframe.remove(), 60000);
   }
 
-  return { build, download };
+  function download(plan, state = {}) {
+    printDoc(build(plan, state), `EverydayGass-${plan.id}`);
+  }
+
+  function buildZones(saved) {
+    const result = window.EGZones?.compute(saved);
+    if (!result) return "";
+    const filename = "EverydayGass-running-zones";
+    const chipsHtml = result.method === "hr"
+      ? `${chip("Max heart rate")}${chip(`${result.maxHr} bpm`)}${chip("Polar %HRmax")}`
+      : `${chip("5K")}${chip(window.EGZones.formatClock(result.fiveKSec))}${chip("Jack Daniels VDOT")}`;
+    const rows = result.bands.map((z) => {
+      const extra = z.displayMi ? `<small>${esc(z.displayMi)}</small>` : "";
+      return `<div class="pdf-zrow${z.focus ? " is-focus" : ""}">
+        <div>
+          <strong>${esc(z.name)}</strong>
+          <small>${esc(z.rpe)}</small>
+        </div>
+        <em>${esc(z.display)}${extra}</em>
+      </div>`;
+    }).join("");
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>${esc(filename)}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; margin: 0; }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    html, body { margin: 0; padding: 0; background: #DFE0E1; }
+    body {
+      background-image: linear-gradient(#DFE0E1, #DFE0E1);
+      color: #000;
+      font-family: "Inter Tight", system-ui, sans-serif;
+    }
+    .pdf {
+      width: 210mm;
+      min-height: 280mm;
+      margin: 0 auto;
+      background: #DFE0E1;
+      background-image: linear-gradient(#DFE0E1, #DFE0E1);
+      display: flex;
+      flex-direction: column;
+    }
+    .pdf-top {
+      background: #000;
+      background-image: linear-gradient(#000, #000);
+      box-shadow: inset 0 0 0 1000px #000;
+      color: #fff;
+      padding: 5mm 8mm 4.5mm;
+    }
+    .pdf-brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .pdf-logo {
+      font-family: Anton, Impact, sans-serif;
+      font-size: 13pt;
+      font-weight: 400;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .pdf-logo span { color: #A8A3A1; }
+    .pdf-mark {
+      font-size: 6.2pt;
+      font-weight: 600;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #A8A3A1;
+    }
+    .pdf-title {
+      font-family: Anton, Impact, sans-serif;
+      font-size: 16pt;
+      font-weight: 400;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      line-height: .92;
+      margin: 2.8mm 0 2mm;
+      color: #fff;
+    }
+    .pdf-chips { display: flex; flex-wrap: wrap; gap: 1.4mm; }
+    .pdf-chip {
+      font-size: 6.1pt;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #DFE0E1;
+      border: .3mm solid rgba(255,255,255,.28);
+      padding: .7mm 2.1mm;
+    }
+    .pdf-intro {
+      margin: 2.4mm 0 0;
+      font-size: 7.6pt;
+      line-height: 1.32;
+      color: #C9C4BB;
+    }
+    .pdf-body { padding: 5mm 8mm 4mm; flex: 1; }
+    .pdf-zcard {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.12);
+      margin: 0 0 3mm;
+    }
+    .pdf-zrow {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 4mm;
+      padding: 3.2mm 3.4mm;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .pdf-zrow:last-child { border-bottom: 0; }
+    .pdf-zrow.is-focus { box-shadow: inset 1.2mm 0 0 #000; }
+    .pdf-zrow strong {
+      display: block;
+      font-size: 10pt;
+      font-weight: 600;
+    }
+    .pdf-zrow small {
+      display: block;
+      font-size: 7.2pt;
+      color: #6A6A6A;
+      margin-top: .5mm;
+    }
+    .pdf-zrow em {
+      font-style: normal;
+      font-size: 10pt;
+      font-weight: 600;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .pdf-zrow em small {
+      font-weight: 500;
+      margin-top: .4mm;
+    }
+    .pdf-note {
+      font-size: 7.4pt;
+      color: #6A6A6A;
+      margin: 0 0 2.8mm;
+      line-height: 1.35;
+    }
+    .pdf-end {
+      background: #000;
+      background-image: linear-gradient(#000, #000);
+      box-shadow: inset 0 0 0 1000px #000;
+      color: #fff;
+      padding: 3.2mm 8mm 3.6mm;
+      margin-top: auto;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .pdf-guide {
+      font-size: 7.4pt;
+      line-height: 1.35;
+      color: #DFE0E1;
+    }
+    .pdf-guide span {
+      font-size: 5.7pt;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #A8A3A1;
+      margin-right: 2.5mm;
+    }
+    .pdf-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 6mm;
+      margin-top: 2mm;
+      padding-top: 2mm;
+      border-top: 1px solid rgba(255,255,255,.16);
+      font-size: 5.9pt;
+      line-height: 1.35;
+      color: #A8A3A1;
+    }
+    .pdf-foot b { color: #fff; font-weight: 600; }
+    @media print {
+      html, body { width: 100%; height: auto; margin: 0; background: #DFE0E1; }
+      .pdf { width: 100%; margin: 0 !important; box-shadow: none !important; }
+    }
+    @media screen {
+      html, body { background: #38383B; }
+      .pdf { box-shadow: 0 18px 50px rgba(0,0,0,.35); margin: 16px auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pdf">
+    <header class="pdf-top">
+      <div class="pdf-brand">
+        <p class="pdf-logo">Everyday<span>Gass</span></p>
+        <p class="pdf-mark">Running zones</p>
+      </div>
+      <h1 class="pdf-title">Your running zones</h1>
+      <div class="pdf-chips">${chipsHtml}</div>
+      <p class="pdf-intro">${esc(result.label)}</p>
+    </header>
+    <div class="pdf-body">
+      <p class="pdf-note">${result.method === "hr"
+        ? "Polar five-zone model: 50–60 / 60–70 / 70–80 / 80–90 / 90–100% of max heart rate."
+        : "Jack Daniels VDOT paces from your 5K. Easy is 59–74% VDOT. 5K race pace sits near Z4–Z5."}</p>
+      <div class="pdf-zcard">${rows}</div>
+      <p class="pdf-note">Zones are a starting point. Heat, hills, and fatigue change the number. If you can’t talk on an easy run, slow down.</p>
+    </div>
+    <footer class="pdf-end">
+      <p class="pdf-guide"><span>Guidance</span>Easy running should live in Z2. Use the talk test if you have no watch. Recalibrate after a hard race.</p>
+      <div class="pdf-foot">
+        <span>Estimates from Polar %HRmax and Jack Daniels VDOT. Not a lab test or medical advice.</span>
+        <span><b>everydaygass.com</b><br>1% better every day.</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>`;
+  }
+
+  function downloadZones(saved) {
+    const html = buildZones(saved);
+    if (!html) return;
+    printDoc(html, "EverydayGass-running-zones");
+  }
+
+  return { build, download, buildZones, downloadZones };
 })();
