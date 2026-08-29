@@ -53,12 +53,12 @@
           <ul data-guidance style="margin:8px 0 0 18px"></ul>
         </div>
         <p class="muted" data-disclaimer style="font-size:.85rem"></p>
-        <div class="upgrade">
+        <div class="upgrade" data-upsell>
           <p class="eyebrow">Next</p>
-          <h2>The week is the start. The next 12 are the system.</h2>
-          <p>A personalized 12-week plan, app access with guidance and a video for every exercise. Add Premium if you want chat, my guidance, and food recipes with the same method.</p>
-          <a class="btn btn--primary btn--full" href="hybrid-plan.html" data-upgrade="primary">Build my full Hybrid Plan</a>
-          <a class="btn btn--ghost btn--full" href="premium.html" data-upgrade="premium" style="margin-top:8px;color:#fff;border-color:#fff">12-week Premium</a>
+          <h2>Ready to go beyond Week 1?</h2>
+          <p>Your free week is only the starting point. Answer a few more questions and I’ll build your complete 12-week Hybrid Training progression around your goals, experience and schedule.</p>
+          <a class="btn btn--primary btn--full" href="build-my-plan.html" data-upgrade="primary">Build my 12-week plan</a>
+          <button class="btn btn--ghost btn--full" type="button" data-upgrade="later" data-upsell-later style="margin-top:8px">Maybe later</button>
         </div>
       </div>
     </section>
@@ -154,6 +154,21 @@
         </form>
         <div class="zone-results" data-zones-out hidden></div>
       </div>
+    </div>
+  </div>
+
+  <div class="sheet sheet--upsell" id="upsellSheet" role="dialog" aria-modal="true" aria-labelledby="upsellTitle" aria-hidden="true">
+    <div class="sheet__panel sheet__panel--upsell" data-upsell-panel>
+      <div class="sheet__handle" data-upsell-handle aria-hidden="true"></div>
+      <div class="sheet__top">
+        <p class="eyebrow">Your Week 1 is ready</p>
+        <button type="button" class="sheet__close" data-upsell-close>Close</button>
+      </div>
+      <h3 id="upsellTitle" tabindex="-1">Want me to build the other 11 weeks?</h3>
+      <p>You’ve already told me how often you train and what you want to improve. Answer a few more questions and I’ll map out your full 12-week Hybrid Training progression.</p>
+      <p class="muted" style="margin:8px 0 18px">5 quick questions.</p>
+      <a class="btn btn--primary btn--full" href="build-my-plan.html" data-upgrade="sheet">Build my 12-week plan</a>
+      <button class="btn btn--ghost btn--full" type="button" data-upsell-later style="margin-top:8px">I’ll do it later</button>
     </div>
   </div>
 

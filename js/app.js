@@ -520,7 +520,13 @@ window.EG = (() => {
 
     recovery.hidden = true;
     result.hidden = false;
-    EGStorage.patch({ ...state, planId: plan.id });
+    EGStorage.patch({
+      ...state,
+      planId: plan.id,
+      priority: plan.priority,
+      daysPerWeek: plan.daysPerWeek,
+      freeWeekCompleted: true
+    });
     track("plan_viewed", { planId: plan.id, priority: plan.priority, daysPerWeek: plan.daysPerWeek });
 
     qs("[data-title]").textContent = `Your ${plan.title}`;
@@ -539,11 +545,245 @@ window.EG = (() => {
       caution.textContent = "You flagged a constraint. This generic week is not individualized medical advice. Get professional clearance where appropriate — you can still use the structure as a starting point.";
     } else caution.hidden = true;
 
-    qs("[data-pdf]").addEventListener("click", () => downloadPdf(plan, state));
+    qs("[data-pdf]").addEventListener("click", () => {
+      EGStorage.patch({ freeWeekDownloaded: true });
+      track("free_week_downloaded", { planId: plan.id });
+      downloadPdf(plan, state);
+      window.setTimeout(() => showUpsellSheet("pdf"), 600);
+    });
     qsa("[data-upgrade]").forEach((el) => {
-      el.addEventListener("click", () => track("upgrade_clicked", { planId: plan.id, placement: el.dataset.upgrade }));
+      el.addEventListener("click", () => {
+        if (el.dataset.upgrade === "later") {
+          dismissUpsell("inline");
+          qs("[data-week]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        EGStorage.patch({ secondQuizStarted: true });
+        track("upsell_cta_clicked", { planId: plan.id, placement: el.dataset.upgrade });
+        track("upgrade_clicked", { planId: plan.id, placement: el.dataset.upgrade });
+      });
     });
     initBasics();
+    initUpsellSheet(plan);
+  }
+
+  function upsellBlocked() {
+    const state = EGStorage.read();
+    if (state.upsellDismissed || state.secondQuizStarted || state.secondQuizCompleted) return true;
+    try { if (sessionStorage.getItem("eg_upsell_dismissed") === "1") return true; }
+    catch { /* ignore */ }
+    return false;
+  }
+
+  function isMobileUpsell() {
+    return window.matchMedia("(max-width: 799px)").matches;
+  }
+
+  function dismissUpsell(source) {
+    EGStorage.patch({ upsellDismissed: true });
+    try { sessionStorage.setItem("eg_upsell_dismissed", "1"); }
+    catch { /* ignore */ }
+    const sheet = qs("#upsellSheet");
+    if (sheet?.classList.contains("is-open")) {
+      track("upsell_dismissed", { source: source || "sheet" });
+    }
+    closeUpsellSheet();
+  }
+
+  function closeUpsellSheet() {
+    const sheet = qs("#upsellSheet");
+    const panel = qs("[data-upsell-panel]");
+    if (!sheet) return;
+    sheet.classList.remove("is-open");
+    sheet.setAttribute("aria-hidden", "true");
+    if (panel) panel.style.transform = "";
+    document.body.style.overflow = "";
+  }
+
+  function showUpsellSheet(source) {
+    const sheet = qs("#upsellSheet");
+    if (!sheet || !isMobileUpsell() || upsellBlocked()) return;
+    if (sheet.classList.contains("is-open")) return;
+    sheet.classList.add("is-open");
+    sheet.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    EGStorage.patch({ upsellShown: true });
+    track("upsell_viewed", { source, placement: "sheet" });
+    qs("#upsellTitle", sheet)?.focus();
+  }
+
+  function initUpsellSheet(plan) {
+    const sheet = qs("#upsellSheet");
+    if (!sheet) return;
+    EGStorage.patch({ freeWeekCompleted: true });
+    track("free_week_generated", { planId: plan.id, priority: plan.priority, daysPerWeek: plan.daysPerWeek });
+    track("upsell_viewed", { source: "inline", placement: "inline" });
+
+    qsa("[data-upsell-close], [data-upsell-later]", sheet).forEach((btn) => {
+      btn.addEventListener("click", () => dismissUpsell(btn.dataset.upsellLater != null ? "later" : "close"));
+    });
+    sheet.addEventListener("click", (e) => { if (e.target === sheet) dismissUpsell("backdrop"); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && sheet.classList.contains("is-open")) dismissUpsell("esc");
+    });
+
+    const panel = qs("[data-upsell-panel]");
+    let startY = 0;
+    let dragging = false;
+    const onStart = (y) => { startY = y; dragging = true; };
+    const onMove = (y) => {
+      if (!dragging || !panel) return;
+      const dy = Math.max(0, y - startY);
+      panel.style.transform = `translateY(${dy}px)`;
+    };
+    const onEnd = (y) => {
+      if (!dragging) return;
+      dragging = false;
+      if (y - startY > 72) dismissUpsell("swipe");
+      else if (panel) panel.style.transform = "";
+    };
+    panel?.addEventListener("touchstart", (e) => onStart(e.touches[0].clientY), { passive: true });
+    panel?.addEventListener("touchmove", (e) => onMove(e.touches[0].clientY), { passive: true });
+    panel?.addEventListener("touchend", (e) => onEnd(e.changedTouches[0].clientY));
+
+    window.setTimeout(() => {
+      if (window.scrollY > 280) showUpsellSheet("time");
+    }, 22000);
+    window.addEventListener("scroll", () => {
+      const doc = document.documentElement;
+      const scrolled = (window.scrollY + window.innerHeight) / Math.max(doc.scrollHeight, 1);
+      if (scrolled > 0.62) showUpsellSheet("scroll");
+    }, { passive: true });
+  }
+
+  function paintOffer(profile) {
+    const offer = qs("#offer");
+    const quiz = qs("#quiz");
+    const progress = qs("#quizProgress");
+    const nav = qs("#quizNav");
+    const generating = qs("#generating");
+    if (generating) generating.hidden = true;
+    if (quiz) quiz.hidden = true;
+    if (progress) progress.hidden = true;
+    if (nav) nav.hidden = true;
+    if (!offer) return;
+    offer.hidden = false;
+    qs("[data-profile-lines]", offer).innerHTML = EGProfile.summaryLines(profile).map((line) => `<li>${line}</li>`).join("");
+    qs("[data-roadmap]", offer).innerHTML = EGProfile.roadmap(profile).map((block) => `
+      <li>
+        <span>${block.weeks}</span>
+        <strong>${block.title}</strong>
+        <p>${block.detail}</p>
+      </li>`).join("");
+    qs("[data-subs]", offer).textContent = EGProfile.substitutions(profile);
+    qs("[data-offer-list]", offer).innerHTML = EGProfile.OFFER_ITEMS.map((item) => `<li>${item}</li>`).join("");
+    const premiumList = qs("[data-premium-list]", offer);
+    if (premiumList) {
+      premiumList.innerHTML = EGProfile.PREMIUM_ITEMS.map((item) => `<li>${item}</li>`).join("");
+    }
+    const payCopy = (product) =>
+      EGCheckout.usesStripe(product) ? "Secure payment via Stripe." : "You’ll get a Stripe payment link by email.";
+    const note = qs("[data-pay-note]", offer);
+    const notePremium = qs("[data-pay-note-premium]", offer);
+    if (note) note.textContent = payCopy("plan12");
+    if (notePremium) notePremium.textContent = payCopy("premium");
+    EGStorage.patch({ paidOfferViewed: true });
+    track("paid_offer_viewed", { priority: profile.priority, target: profile.target });
+  }
+
+  function bindCheckout(profile) {
+    qsa("[data-checkout]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const product = btn.dataset.checkout || "plan12";
+        track("checkout_clicked", { product, priority: profile.priority });
+        EGCheckout.start(profile, product);
+      });
+    });
+  }
+
+  function initBuildPlan() {
+    mountChrome({ funnel: true });
+    const stored = EGStorage.read();
+    if (!stored.priority || !stored.daysPerWeek) {
+      location.replace("free-week.html");
+      return;
+    }
+
+    const generating = qs("#generating");
+    const quiz2 = stored.quiz2 || {};
+    if (EGProfile.isComplete(quiz2) || stored.secondQuizCompleted) {
+      const profile = EGProfile.build(stored, quiz2);
+      paintOffer(profile);
+      bindCheckout(profile);
+      return;
+    }
+
+    track("second_quiz_started", { priority: stored.priority, daysPerWeek: stored.daysPerWeek });
+    EGStorage.patch({ secondQuizStarted: true });
+
+    const root = qs("#quiz");
+    const bar = qs("#progressBar");
+    const stepLabel = qs("#stepLabel");
+    const back = qs("#backBtn");
+    let answers = { ...quiz2 };
+    let step = 0;
+
+    function questions() {
+      return EGProfile.questionsFor(answers);
+    }
+
+    function paint() {
+      const list = questions();
+      if (step >= list.length) step = Math.max(0, list.length - 1);
+      const q = list[step];
+      const total = list.length;
+      bar.style.width = `${((step + 1) / total) * 100}%`;
+      stepLabel.textContent = `${step + 1} of ${total}`;
+      back.disabled = false;
+      const selected = answers[q.field] == null ? "" : String(answers[q.field]);
+      root.innerHTML = `<p class="eyebrow">Let’s build your 12-week progression.</p><h1>${q.title}</h1>${optionList(q, selected)}`;
+      qsa("[data-field]", root).forEach((btn) => {
+        btn.addEventListener("click", () => {
+          answers[q.field] = btn.dataset.value;
+          if (q.field === "target" && !EGProfile.NEEDS_EVENT.includes(answers.target)) {
+            delete answers.eventWindow;
+          }
+          EGStorage.patch({ quiz2: answers, secondQuizStarted: true });
+          track("second_quiz_question_completed", { questionId: q.id, answerKey: btn.dataset.value, step: step + 1 });
+          qsa(".option", root).forEach((b) => b.classList.toggle("is-selected", b === btn));
+          window.setTimeout(() => go(1), 160);
+        });
+      });
+    }
+
+    function go(delta) {
+      const nextStep = step + delta;
+      if (nextStep < 0) {
+        location.href = "free-week-result.html";
+        return;
+      }
+      if (nextStep >= questions().length) return finish();
+      step = nextStep;
+      paint();
+    }
+
+    function finish() {
+      if (!EGProfile.isComplete(answers)) {
+        paint();
+        return;
+      }
+      EGStorage.patch({ quiz2: answers, secondQuizCompleted: true, secondQuizCompletedAt: Date.now() });
+      track("second_quiz_completed", { target: answers.target, limitation: answers.limitation });
+      const profile = EGProfile.build(EGStorage.read(), answers);
+      if (generating) generating.hidden = false;
+      window.setTimeout(() => {
+        paintOffer(profile);
+        bindCheckout(profile);
+      }, 1400);
+    }
+
+    back.addEventListener("click", () => go(-1));
+    paint();
   }
 
   function initPage() { mountChrome(); }
@@ -554,5 +794,5 @@ window.EG = (() => {
     if (mount && plan) renderPlan(plan, mount, { openFirst: true });
   }
 
-  return { initHome, initFreeWeek, initResult, initPage, initHybridPlan, track };
+  return { initHome, initFreeWeek, initResult, initPage, initHybridPlan, initBuildPlan, track };
 })();
