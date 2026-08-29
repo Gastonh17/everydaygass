@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="robots" content="noindex" />
+  <title>Your Hybrid Training Week — EverydayGass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+  <div data-header></div>
+
+  <section class="section" id="recovery" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Start over</p>
+      <h1 style="font-size:2rem;margin:8px 0 12px">We couldn’t find that week.</h1>
+      <p class="lead">The free plan is assigned from your priority and training days. Rebuild it in about a minute.</p>
+      <a class="btn btn--primary btn--full" href="free-week.html">Restart questionnaire</a>
+    </div>
+  </section>
+
+  <main id="result" hidden>
+    <section class="section" style="padding-top:28px;padding-bottom:8px">
+      <div class="wrap">
+        <p class="eyebrow">Your free week</p>
+        <h1 data-title style="font-size:clamp(1.45rem,6.4vw,2.2rem);margin:8px 0;overflow-wrap:anywhere">Your Hybrid Training Week</h1>
+        <div class="plan-meta" data-meta></div>
+        <p class="caution" data-caution hidden></p>
+        <p class="lead" data-intro></p>
+        <button type="button" class="basics-banner" data-basics-open aria-haspopup="dialog" aria-controls="basicsSheet">
+          <span class="basics-banner__mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 11v6M12 8h.01"/>
+            </svg>
+          </span>
+          <span class="basics-banner__copy">
+            <strong>Training basics</strong>
+            <span data-basics-hint>What RPE means, and how to set your running zones.</span>
+          </span>
+          <span class="basics-banner__cta">Open</span>
+        </button>
+        <h2 style="font-size:1.2rem;margin-top:8px">Week overview</h2>
+        <div data-overview></div>
+        <div class="week" data-week></div>
+        <div class="rule">
+          <p><strong>Guidance</strong></p>
+          <ul data-guidance style="margin:8px 0 0 18px"></ul>
+        </div>
+        <p class="muted" data-disclaimer style="font-size:.85rem"></p>
+        <div class="upgrade">
+          <p class="eyebrow">Next</p>
+          <h2>The week is the start. The next 12 are the system.</h2>
+          <p>A personalized 12-week plan, app access with guidance and a video for every exercise. Add Premium if you want chat, my guidance, and food recipes with the same method.</p>
+          <a class="btn btn--primary btn--full" href="hybrid-plan.html" data-upgrade="primary">Build my full Hybrid Plan</a>
+          <a class="btn btn--ghost btn--full" href="premium.html" data-upgrade="premium" style="margin-top:8px;color:#fff;border-color:#fff">12-week Premium</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="sticky-cta">
+      <div class="wrap">
+        <button class="btn btn--dark btn--full" type="button" data-pdf>Download PDF</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="sheet" id="basicsSheet" role="dialog" aria-modal="true" aria-labelledby="basicsTitle" aria-hidden="true">
+    <div class="sheet__panel sheet__panel--basics">
+      <div class="sheet__top">
+        <p class="eyebrow">Before you train</p>
+        <button type="button" class="sheet__close" data-basics-close>Close</button>
+      </div>
+      <h3 id="basicsTitle" tabindex="-1">RPE and running zones</h3>
+      <p class="muted" style="margin:6px 0 0;font-size:.92rem">Sessions use feeling, not a race pace. Learn the terms, then set zones if you train with a watch.</p>
+      <div class="basics-tabs" role="tablist">
+        <button type="button" role="tab" id="tabRpe" aria-controls="panelRpe" aria-selected="true" class="is-on" data-basics-tab="rpe">RPE</button>
+        <button type="button" role="tab" id="tabZones" aria-controls="panelZones" aria-selected="false" data-basics-tab="zones">Running zones</button>
+      </div>
+      <div id="panelRpe" role="tabpanel" aria-labelledby="tabRpe" data-basics-panel="rpe">
+        <p class="basics-lead">RPE is rate of perceived exertion — how hard the work feels from 1 to 10. Match the number on the session, not your ego.</p>
+        <ol class="rpe-scale">
+          <li>
+            <span class="rpe-scale__n">1–2</span>
+            <div>
+              <strong>Recovery</strong>
+              <p>Barely working. Easy walk, mobility. You could do this all day.</p>
+            </div>
+          </li>
+          <li>
+            <span class="rpe-scale__n">3–4</span>
+            <div>
+              <strong>Easy · you can talk</strong>
+              <p>Full sentences. Easy runs live here. If you can’t speak, slow down.</p>
+            </div>
+          </li>
+          <li>
+            <span class="rpe-scale__n">5–6</span>
+            <div>
+              <strong>Moderate · steady</strong>
+              <p>Short sentences. Quality or hybrid work. Honest, still in control.</p>
+            </div>
+          </li>
+          <li>
+            <span class="rpe-scale__n">7</span>
+            <div>
+              <strong>Hard</strong>
+              <p>A few words. Strength last reps, HYROX rounds. Leave 1–2 reps in the tank.</p>
+            </div>
+          </li>
+          <li>
+            <span class="rpe-scale__n">8–10</span>
+            <div>
+              <strong>Very hard / max</strong>
+              <p>Not this free week. Don’t chase it.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <div id="panelZones" role="tabpanel" aria-labelledby="tabZones" data-basics-panel="zones" hidden>
+        <p class="basics-lead">No watch? Use the talk test. Zone 2 = easy conversation. That is most of your running this week.</p>
+        <ul class="zone-guide">
+          <li><strong>Z1 · Recovery</strong> <span>Walk. Nose breathing. RPE 1–2.</span></li>
+          <li><strong>Z2 · Easy</strong> <span>You can talk. Easy runs. RPE 3–4.</span></li>
+          <li><strong>Z3 · Steady</strong> <span>Short sentences. Quality sessions. RPE 5–6.</span></li>
+          <li><strong>Z4–5 · Hard / max</strong> <span>Few words or none. Not the point of this week.</span></li>
+        </ul>
+        <form class="zones-form" data-zones-form>
+          <p class="ex-label" style="margin-top:4px">Set heart-rate zones</p>
+          <p class="muted" style="font-size:.85rem;margin:4px 0 10px">Estimate from age (220 − age), or enter a tested max HR if you have one.</p>
+          <div class="field">
+            <label for="zoneAge">Age</label>
+            <input id="zoneAge" name="age" type="number" min="16" max="90" inputmode="numeric" placeholder="e.g. 34" />
+          </div>
+          <div class="field">
+            <label for="zoneMaxHr">Known max heart rate (optional)</label>
+            <input id="zoneMaxHr" name="maxHr" type="number" min="120" max="230" inputmode="numeric" placeholder="Overrides the age estimate" />
+          </div>
+          <p class="zones-form__error" data-zones-error hidden>Enter an age between 16 and 90, or a max HR between 120 and 230.</p>
+          <button class="btn btn--primary btn--full" type="submit">Set my running zones</button>
+        </form>
+        <div class="zone-results" data-zones-out hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <div data-footer></div>
+  <script src="js/getPlanId.js"></script>
+  <script src="js/data/plans.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+  <script>EG.initResult()</script>
+</body>
+</html>

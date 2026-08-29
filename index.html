@@ -2,436 +2,140 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EverydayGass — pick your fitness path: from a custom training plan to full 1:1 coaching, starting at €99." />
-  <title>EverydayGass — Choose your path</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="description" content="EverydayGass — hybrid training to become stronger, faster and more athletic. Love the beginner. 1% better every day." />
+  <title>EverydayGass — Become the athlete you didn’t think you could be</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
+  <div data-header></div>
 
-  <section class="hero" id="hero">
-    <div class="container hero__inner">
-      <div class="hero__content">
-        <p class="hero__label">EverydayGass</p>
-        <h1 class="hero__headline">Stop training at random.</h1>
-        <p class="hero__sub">A plan built around your goals, with the level of support you actually need: from a custom program to full 1:1 coaching.</p>
-        <a href="#pricing" class="btn btn--primary">See the packages &darr;</a>
-        <p class="hero__trust">8-week programs &middot; Initial video call included</p>
-      </div>
-      <div class="hero__media">
-        <img src="images/hero.jpg" alt="EverydayGass coaching in the gym" class="hero__photo" />
+  <section class="masthead">
+    <div class="wrap">
+      <p class="eyebrow">EverydayGass · Hybrid Training</p>
+      <h1>Become the athlete you didn’t think you could be.</h1>
+      <p class="lead">Get your personalized 1-week Hybrid Training plan in about a minute. No account. No app.</p>
+      <a class="btn btn--primary" href="free-week.html">Build my free Hybrid Week</a>
+    </div>
+  </section>
+
+  <figure class="bleed">
+    <img src="images/hero-run.jpg" alt="Athlete training outdoors" />
+  </figure>
+
+  <section class="section" id="philosophy">
+    <div class="wrap">
+      <p class="eyebrow">Philosophy</p>
+      <h2>Love the beginner. 1% better every day.</h2>
+      <p class="lead">We don’t ask you to train like an elite. We start where you are — first 5K, getting stronger, coming back after a break — and we build an athletic identity you can repeat.</p>
+    </div>
+  </section>
+
+  <section class="section section--sand" id="method">
+    <div class="wrap">
+      <p class="eyebrow">The method</p>
+      <h2>Run. Lift. Condition. Recover.</h2>
+      <p class="lead">5K, 10K and HYROX are goals. Hybrid is the identity. One method, different entry points.</p>
+      <div class="pillars">
+        <article class="pillar">
+          <div class="pillar__icon">01</div>
+          <h3>Run</h3>
+          <p>Easy aerobic work first. Speed comes later.</p>
+        </article>
+        <article class="pillar">
+          <div class="pillar__icon">02</div>
+          <h3>Lift</h3>
+          <p>Squat, hinge, push, pull. Strength that lasts.</p>
+        </article>
+        <article class="pillar">
+          <div class="pillar__icon">03</div>
+          <h3>Condition</h3>
+          <p>Mixed sessions when the base is there.</p>
+        </article>
+        <article class="pillar">
+          <div class="pillar__icon">04</div>
+          <h3>Recover</h3>
+          <p>The week only counts if you can repeat it.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="section" id="pricing">
-    <div class="container">
-      <h2 class="section__title reveal">Choose the path that fits you</h2>
-      <p class="section__lead reveal">8-week programs, with the level of support you prefer. The more weeks you commit to, the more you save.</p>
-
-      <div class="pricing-toggle reveal" role="tablist">
-        <button type="button" class="pricing-toggle__btn is-active" data-period="8">8 weeks</button>
-        <button type="button" class="pricing-toggle__btn" data-period="16">16 weeks <span class="pricing-toggle__badge">-10%</span></button>
-        <button type="button" class="pricing-toggle__btn" data-period="24">24 weeks <span class="pricing-toggle__badge">-15%</span></button>
-      </div>
-
-      <div class="pricing-grid">
-
-        <div class="pricing-card reveal">
-          <h3 class="pricing-card__name">Everyday</h3>
-          <p class="pricing-card__tagline">Your custom plan, so you train with a method</p>
-          <p class="pricing-card__price">
-            <span class="pricing-card__amount" data-p8="99" data-p16="178" data-p24="252">€99</span>
-            <span class="pricing-card__weekly" data-weekly>€12.38 / week</span>
-          </p>
-          <p class="pricing-card__period-label" data-period-label>for 8 weeks</p>
-          <p class="pricing-card__billed" data-billed hidden></p>
-          <ul class="pricing-card__features">
-            <li>Personalized training program</li>
-            <li>Initial video call with us</li>
-            <li>Plan update every 8 weeks</li>
-          </ul>
-          <a href="#form" class="btn btn--outline btn--full pricing-card__cta">Choose Everyday &rarr;</a>
-          <p class="pricing-card__trust">🔒 Secure checkout coming soon</p>
-        </div>
-
-        <div class="pricing-card pricing-card--popular reveal">
-          <span class="pricing-card__flag">Most popular</span>
-          <h3 class="pricing-card__name">Everyday Plus</h3>
-          <p class="pricing-card__tagline">The custom plan, plus ongoing support in your corner</p>
-          <p class="pricing-card__price">
-            <span class="pricing-card__amount" data-p8="249" data-p16="448" data-p24="635">€249</span>
-            <span class="pricing-card__weekly" data-weekly>€31.13 / week</span>
-          </p>
-          <p class="pricing-card__period-label" data-period-label>for 8 weeks</p>
-          <p class="pricing-card__billed" data-billed hidden></p>
-          <ul class="pricing-card__features">
-            <li>Personalized training program</li>
-            <li>Initial video call with us</li>
-            <li>Plan update every 8 weeks</li>
-            <li>Chat support for the full duration of the plan, with dedicated time slots</li>
-            <li>The EverydayGass recipe book</li>
-            <li>Our guide to building better habits</li>
-          </ul>
-          <a href="#form" class="btn btn--primary btn--full pricing-card__cta">Choose Everyday Plus &rarr;</a>
-          <p class="pricing-card__trust">🔒 Secure checkout coming soon</p>
-        </div>
-
-        <div class="pricing-card reveal">
-          <h3 class="pricing-card__name">Method GASS</h3>
-          <p class="pricing-card__tagline">Full 1:1 coaching with EverydayGass</p>
-          <p class="pricing-card__price pricing-card__price--cta">Want complete results?</p>
-          <ul class="pricing-card__features">
-            <li>1:1 coaching with your EverydayGass coach</li>
-            <li>Weekly check-ins and a plan built around you</li>
-            <li>Ongoing support via chat</li>
-          </ul>
-          <a href="#form" class="btn btn--dark btn--full pricing-card__cta">Book the call &rarr;</a>
-        </div>
-
-      </div>
-
-      <p class="pricing-note reveal">After you sign up you get an email confirmation right away, and we schedule your initial video call together. From there we build the program around you.</p>
+  <section class="section" id="goals">
+    <div class="wrap">
+      <p class="eyebrow">Start here</p>
+      <h2>What do you want to improve most right now?</h2>
+      <p class="lead">Four priorities. Five frequencies. Twenty weeks. Hybrid stays the identity.</p>
+      <div class="goal-grid" data-priorities></div>
     </div>
   </section>
 
-  <section class="section" id="about">
-    <div class="container">
-      <h2 class="section__title reveal">Not just a coach.<br>A system that actually fits your life.</h2>
-      <p class="section__lead reveal">We will not ask you to train seven days a week or blow up the life you already have. We build a sustainable system around your job, your rhythm, and who you really are — so you can feel what being well is worth, and stop believing this “isn’t for you.”</p>
-
-      <div class="coaches">
-
-        <div class="coach-card reveal">
-          <img src="images/coach-gaston.jpg" alt="Gaston, founder of EverydayGass" class="coach-card__photo" />
-          <h3 class="coach-card__name">Gaston</h3>
-          <span class="badge">Founder</span>
-          <p class="coach-card__role">Coach &amp; Creator</p>
-          <p class="coach-card__bio">Years of building products with a packed calendar taught him what it means to want to train when time is short and stress is high. Today he coaches people who want a body that lasts — starting from the life they actually live, not the one they wish they had.</p>
+  <section class="section section--sand" id="proof">
+    <div class="wrap">
+      <p class="eyebrow">Proof</p>
+      <h2>Real progress, not perfect beginnings.</h2>
+      <div class="media-card">
+        <img src="images/founder.jpg" alt="Founder training" />
+        <div class="media-card__body">
+          <p class="muted">Gaston · founder</p>
+          <p class="quote">“I live the process I teach. The goal is not one perfect week. It’s a system you can repeat when work is messy.”</p>
         </div>
-
-        <div class="coach-card reveal">
-          <img src="images/coach-method.jpg" alt="The EverydayGass method" class="coach-card__photo" />
-          <h3 class="coach-card__name">The EverydayGass method</h3>
-          <span class="badge">Programming</span>
-          <p class="coach-card__role">Smart training for real weeks</p>
-          <p class="coach-card__bio">Every plan is built with recovery, old injuries, and long-term progress in mind. That does not mean rehab. It means smarter progressions, fewer setbacks, and training that still works a year from now — an advantage you feel in the results.</p>
-        </div>
-
       </div>
     </div>
   </section>
 
-  <section class="section section--alt" id="method">
-    <div class="container">
-      <h2 class="section__title reveal">How we work</h2>
+  <section class="section" id="path">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2>Start free. Follow a path. Add support when you need it.</h2>
       <div class="steps">
-
-        <div class="step reveal">
-          <div class="step__num">01</div>
-          <div class="step__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+        <article class="step">
+          <div class="step__n">01</div>
+          <div>
+            <h3>Free week</h3>
+            <p>Seven questions. One of 20 plans. Train tomorrow, in the browser.</p>
           </div>
-          <div class="step__body">
-            <h3 class="step__title">We start with you</h3>
-            <p class="step__desc">On a discovery call we look at your real life: work, schedule, training level, and any constraints. No cookie-cutter spreadsheet. We start from who you actually are.</p>
+        </article>
+        <article class="step">
+          <div class="step__n">02</div>
+          <div>
+            <h3>12-week plan · €129</h3>
+            <p>Personalized progression. App access with guidance and a video for every exercise.</p>
           </div>
-        </div>
-
-        <div class="step reveal">
-          <div class="step__num">02</div>
-          <div class="step__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V19.5a2.25 2.25 0 002.25 2.25h.75m0-3.75H9m3 3.75h3.75" /></svg>
+        </article>
+        <article class="step">
+          <div class="step__n">03</div>
+          <div>
+            <h3>12-week Premium · €249</h3>
+            <p>Same plan, plus my guidance, chat, and food recipes.</p>
           </div>
-          <div class="step__body">
-            <h3 class="step__title">Custom programming</h3>
-            <p class="step__desc">We build a plan that gets you the results you want: cut to your needs, designed to play to your strengths and close the gaps that are holding you back.</p>
-          </div>
-        </div>
-
-        <div class="step reveal">
-          <div class="step__num">03</div>
-          <div class="step__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
-          </div>
-          <div class="step__body">
-            <h3 class="step__title">Ongoing support</h3>
-            <p class="step__desc">We stay with you through the program with adjustments, check-ins, and support — so your effort turns into results that stick.</p>
-          </div>
-        </div>
-
+        </article>
+      </div>
+      <div style="margin-top:32px">
+        <a class="btn btn--primary" href="free-week.html">Build my free Hybrid Week</a>
       </div>
     </div>
   </section>
 
-  <section class="section" id="results">
-    <div class="container">
-      <h2 class="section__title reveal">Real results, real people</h2>
-      <div class="transformations">
-
-        <div class="transformation-card reveal">
-          <img src="images/t1.jpg" alt="Client transformation 1" class="transformation-card__img" />
-          <div class="transformation-card__body">
-            <p class="transformation-card__name">Leo, 25 · <strong>+2 kg of muscle</strong></p>
-            <blockquote class="transformation-card__quote">“The plan was the first thing that actually stuck. I even dropped the late-night snacks without feeling like I was on a diet.”</blockquote>
-          </div>
-        </div>
-
-        <div class="transformation-card reveal">
-          <img src="images/t2.jpg" alt="Client transformation 2" class="transformation-card__img" />
-          <div class="transformation-card__body">
-            <p class="transformation-card__name">Giulia, 27 · <strong>−5 kg of fat in three months</strong></p>
-            <blockquote class="transformation-card__quote">“I didn’t have to follow a restrictive diet. I just finally understood how to organize my week.”</blockquote>
-          </div>
-        </div>
-
-        <div class="transformation-card reveal">
-          <img src="images/t3.jpg" alt="Client transformation 3" class="transformation-card__img" />
-          <div class="transformation-card__body">
-            <p class="transformation-card__name">Nick, 32 · <strong>−8 kg in 2 months</strong></p>
-            <blockquote class="transformation-card__quote">“Walking every day and cleaning up the weekends did more than any program I had tried on my own.”</blockquote>
-          </div>
-        </div>
-
-        <div class="transformation-card reveal">
-          <img src="images/t4.jpg" alt="Client transformation 4" class="transformation-card__img" />
-          <div class="transformation-card__body">
-            <p class="transformation-card__name">Marco, 31 · <strong>+1 kg of muscle in 3 months</strong></p>
-            <blockquote class="transformation-card__quote">“They taught me how to make training fit a messy work week, instead of waiting for a perfect one that never comes.”</blockquote>
-          </div>
-        </div>
-
-      </div>
+  <section class="section section--ink">
+    <div class="wrap center">
+      <p class="eyebrow">Start where you are</p>
+      <h2>Tell me your goal. I’ll help you structure the first week.</h2>
+      <p class="muted" style="margin: 0 auto 24px">Free. Visible on your phone. Downloadable as PDF.</p>
+      <a class="btn btn--primary" href="free-week.html">Build my free Hybrid Week</a>
     </div>
   </section>
 
-  <section class="section section--alt" id="proof">
-    <div class="container">
-      <h2 class="section__title reveal">We would never ask you to do<br>what has not worked on us first.</h2>
-      <p class="section__lead reveal">Before we offer this method to anyone, we run it on ourselves. This is Gaston’s transformation: three months, with the same job to fit in and the same amount of time anyone else has.</p>
-      <div class="founder-proof reveal">
-        <div class="transformation-card">
-          <img src="images/founder.jpg" alt="Gaston, founder of EverydayGass: three months of the method" class="transformation-card__img" />
-          <div class="transformation-card__body">
-            <p class="transformation-card__name">Gaston, 27 · <strong>founder of EverydayGass</strong></p>
-            <blockquote class="transformation-card__quote">“I was already training. Dropping the habits that were quietly wrecking my progress is what changed my body for good.”</blockquote>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="for-you">
-    <div class="container">
-      <h2 class="section__title reveal">Is this the right path for you?</h2>
-      <div class="fit-grid">
-
-        <div class="fit-col reveal">
-          <h3 class="fit-col__subtitle">It’s for you if…</h3>
-          <ul class="fit-list fit-list--yes">
-            <li>You’re tired of starting and quitting after two weeks</li>
-            <li>You have a demanding job (employee, founder, freelancer) and can’t lock in a routine</li>
-            <li>You’ve already tried on your own and you’re not seeing results</li>
-            <li>You think you don’t have enough time or willpower — and you want to stop believing that</li>
-            <li>You want a system that adapts to your life, not the other way around</li>
-          </ul>
-        </div>
-
-        <div class="fit-col reveal">
-          <h3 class="fit-col__subtitle">It’s not for you if…</h3>
-          <ul class="fit-list fit-list--no">
-            <li>You’re looking for a crash diet to lose 10 kg in a month</li>
-            <li>You’re not willing to make any trade-offs</li>
-            <li>You want someone to think for you while you stay on the sidelines</li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--alt" id="faq">
-    <div class="container">
-      <h2 class="section__title reveal">The questions we hear most</h2>
-      <div class="faq-list">
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “What happens after I sign up?”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>Right after you confirm, you get an email and we book your initial video call. On that call we look at your situation and your goals. Only then do we write the program, cut to you. This is not a generic PDF that lands in your inbox.</p>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “When do the 8 weeks actually start?”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>From the day you <strong>receive the program</strong>, not from the day you pay. Between payment and delivery we run the initial call and take the two working days we need to build the plan. That time is not taken off your program. Renewal counting starts there too, so you get every week you paid for.</p>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “What’s the difference between Everyday and Everyday Plus?”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>Both include the custom program, the initial video call, and a plan update every 8 weeks. Everyday Plus adds the real support: chat coaching for the full duration of the plan with dedicated time slots, the EverydayGass recipe book, and the habit-building guide. In short: with Everyday you train on your own; with Everyday Plus we’re with you along the way.</p>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “What happens at the end of the program?”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>When it ends, the path renews automatically for another cycle of the same length, so you keep the momentum and get an updated plan. If you’d rather stop, you can cancel on your own <strong>up to 24 hours before renewal</strong>, with no fees: the program you already paid for stays active until it expires. Before every renewal we send email reminders with the date, the amount, and a one-click cancel link.</p>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “Can I switch programs or move to Method GASS?”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>Yes. You can move from Everyday to Everyday Plus (or the other way) by writing to us: we apply the change from the next cycle. If you feel you need the full path, book the free call below and we’ll look at Method GASS together.</p>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “Who writes my training program?”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>A real coach, not an algorithm. Every program is built from the goals, starting point, and physical limits you share with us.</p>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-item__question" aria-expanded="false">
-            “I have back pain / old injuries”
-            <svg class="faq-item__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-          </button>
-          <div class="faq-item__answer">
-            <p>We take that into account when we write your program. Bring it up on the initial video call: it shapes how we program around you. EverydayGass is sports and lifestyle coaching, not medical care — for a diagnosis, see a licensed specialist.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--dark" id="form">
-    <div class="container">
-      <h2 class="section__title section__title--light reveal">Want the full path? Book a free call</h2>
-      <p class="section__lead section__lead--light reveal">Fill in the form and book a call to see if 1:1 coaching with Method GASS is the right next step.</p>
-
-      <form class="qual-form reveal" id="qualForm" novalidate>
-
-        <div class="form-field">
-          <label for="name" class="form-field__label">Full name</label>
-          <input type="text" id="name" name="name" class="form-field__input" placeholder="Your first and last name" required />
-        </div>
-
-        <div class="form-field">
-          <label for="email" class="form-field__label">Email</label>
-          <input type="email" id="email" name="email" class="form-field__input" placeholder="Your email" required />
-        </div>
-
-        <div class="form-field">
-          <label for="goal" class="form-field__label">What’s your main goal?</label>
-          <select id="goal" name="goal" class="form-field__input" required>
-            <option value="" disabled selected>Select a goal</option>
-            <option value="lose-weight">Lose weight</option>
-            <option value="build-muscle">Build muscle</option>
-            <option value="general-fitness">Improve overall fitness</option>
-            <option value="other">Other</option>
-          </select>
-          <input type="text" id="goal-other" name="goal-other" class="form-field__input form-field__input--altro" placeholder="Tell us your goal" style="display:none; margin-top:8px;" />
-        </div>
-
-        <div class="form-field">
-          <label for="experience" class="form-field__label">Have you followed a training or nutrition plan before?</label>
-          <select id="experience" name="experience" class="form-field__input" required>
-            <option value="" disabled selected>Select an option</option>
-            <option value="never">No, never</option>
-            <option value="stopped">Yes, but I stopped</option>
-            <option value="no-results">Yes, I’m still on one but I’m not seeing results</option>
-          </select>
-        </div>
-
-        <div class="form-field">
-          <label for="days" class="form-field__label">How many days a week can you train?</label>
-          <select id="days" name="days" class="form-field__input" required>
-            <option value="" disabled selected>Select an option</option>
-            <option value="1-2">1–2 days</option>
-            <option value="3-4">3–4 days</option>
-            <option value="5+">5 or more days</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn--primary btn--full">Send and book the call &rarr;</button>
-        <p class="form__note">After you send it, we’ll email you to pick a time.</p>
-
-      </form>
-
-      <div class="form-success" id="formSuccess" hidden>
-        <div class="form-success__icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        </div>
-        <h3 class="form-success__title">Got it. We’ll be in touch.</h3>
-        <p class="form-success__text">Your details are ready. Send the email that just opened — or write us at <a href="mailto:hello@everydaygass.com">hello@everydaygass.com</a> — and we’ll lock in a 30-minute call.</p>
-        <ul class="booking-done__list">
-          <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2.4" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-            <span>Think through your real week: work, hours, how many days you can train without inventing time you don’t have.</span>
-          </li>
-          <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2.4" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-            <span>If you’ve followed programs before, keep them handy: knowing what didn’t work saves us weeks.</span>
-          </li>
-          <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2.4" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-            <span>If something comes up, just reply to the email and we’ll move the slot.</span>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p class="footer__logo">Everyday<span>Gass</span></p>
-      <p class="footer__legal">&copy; 2026 EverydayGass</p>
-      <p class="footer__disclaimer">EverydayGass is sports and lifestyle coaching. Any food guidance is general lifestyle advice and is not nutrition, medical, or physiotherapy care. For specific medical conditions, always see a licensed specialist.</p>
-      <nav class="footer__links">
-        <a class="footer__link" href="privacy.html">Privacy Policy</a>
-        <a class="footer__link" href="cookie.html">Cookie Policy</a>
-        <a class="footer__link" href="terms.html">Terms and Conditions</a>
-      </nav>
-      <div class="footer__social">
-        <a href="https://instagram.com/everydaygass" target="_blank" rel="noopener" class="footer__link">@everydaygass</a>
-      </div>
-    </div>
-  </footer>
-
-  <div class="sticky-cta" id="stickyCta">
-    <a href="#pricing" class="btn btn--primary btn--full">Choose your path &rarr;</a>
-  </div>
-
-  <script src="script.js"></script>
+  <div data-footer></div>
+  <script src="js/getPlanId.js"></script>
+  <script src="js/data/plans.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+  <script>EG.initHome()</script>
 </body>
 </html>

@@ -1,22 +1,22 @@
-# EverydayGass
+# EverydayGass — Hybrid Training
 
-English landing page for [EverydayGass](https://github.com/Gastonh17/everydaygass) — custom training plans and 1:1 coaching.
-
-Open `index.html` in a browser, or serve the folder:
+Mobile-first free-week funnel: 7 questions → 1 of 20 plans → web view + PDF. No account.
 
 ```bash
-python3 -m http.server 8080
+python3 -m http.server 8080 --bind 0.0.0.0
 ```
 
-Then visit http://localhost:8080
+Phone on the same Wi-Fi: `http://<your-lan-ip>:8080/`
 
-## Customize
+## Routes
 
-- Photos: replace files in `images/`
-- Contact email: `hello@everydaygass.com` in `index.html` and `script.js`
-- Stripe checkout: add payment links on the Everyday / Everyday Plus buttons
-- Calendly: swap the form success step for your booking URL
+| Path | Role |
+| --- | --- |
+| `/` | Landing |
+| `/free-week.html` | Questionnaire |
+| `/free-week-result.html` | Assigned week + PDF |
+| `/hybrid-plan.html` | Paid 12-week offer |
+| `/premium.html` | 12-week Premium (chat + recipes) |
+| `/coaching.html` | Redirects to Premium |
 
-## GitHub Pages
-
-Repo settings → Pages → Deploy from branch `main` / root.
+Plan assignment uses only **priority** + **days** (`{priority}-{days}d`). Canonical data: `js/data/plans.js`. Tests: `node tests/plan.test.js`.

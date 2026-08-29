@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile preview — EverydayGass</title>
+  <style>
+    :root { --bezel: #000; --screen: #000; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter Tight", system-ui, sans-serif;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+      color: #000;
+    }
+    h1 { font-size: 1.1rem; margin: 0 0 6px; letter-spacing: .12em; text-transform: uppercase; }
+    p { margin: 0 0 18px; color: #6A6A6A; font-size: .9rem; text-align: center; max-width: 420px; }
+    .phone {
+      width: 390px;
+      height: 844px;
+      max-height: calc(100vh - 120px);
+      background: var(--bezel);
+      border-radius: 44px;
+      padding: 12px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.18);
+      position: relative;
+    }
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 2;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 34px;
+      background: #fff;
+    }
+    nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+    a.chip {
+      background: #000;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    a.chip.is-ghost { background: #fff; color: #000; border: 1px solid #000; }
+  </style>
+</head>
+<body>
+  <h1>iPhone preview · 390 × 844</h1>
+  <p>This is the site as it should feel on a phone. Click inside the device to use the quiz.</p>
+  <nav>
+    <a class="chip" href="#" data-src="index.html">Home</a>
+    <a class="chip" href="#" data-src="free-week.html">Quiz</a>
+    <a class="chip" href="#" data-src="free-week-result.html?priority=balanced&days=4">Sample week</a>
+    <a class="chip is-ghost" href="index.html">Open full desktop</a>
+  </nav>
+  <div class="phone">
+    <iframe id="frame" src="index.html" title="EverydayGass mobile"></iframe>
+  </div>
+  <script>
+    const frame = document.getElementById("frame");
+    document.querySelectorAll("[data-src]").forEach((a) => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        frame.src = a.dataset.src;
+      });
+    });
+  </script>
+</body>
+</html>

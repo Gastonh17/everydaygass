@@ -2,40 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFFFFF" />
   <title>Cookie Policy — EverydayGass</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
-  <section class="section legal-page">
-    <div class="container">
-      <a class="legal-back" href="index.html">&larr; Back to EverydayGass</a>
-      <h1 class="section__title">Cookie Policy</h1>
-      <p class="section__lead">Last updated: August 22, 2026</p>
-
-      <div class="legal-block">
-        <h2>What we use today</h2>
-        <p>This site currently uses only technically necessary storage required for the page to work (for example, remembering form state in your browser). We do not set advertising or analytics cookies unless we later add them and update this page.</p>
-      </div>
-      <div class="legal-block">
-        <h2>Third-party fonts</h2>
-        <p>We load the Inter font from Google Fonts. Google may process your IP address to deliver the file. You can block third-party requests in your browser if you prefer.</p>
-      </div>
-      <div class="legal-block">
-        <h2>Questions</h2>
-        <p>Write to <a href="mailto:hello@everydaygass.com">hello@everydaygass.com</a>.</p>
-      </div>
-    </div>
+  <div data-header></div>
+  <section class="legal wrap">
+    <p class="eyebrow">Legal</p>
+    <h1>Cookie Policy</h1>
+    <p>Last updated: August 29, 2026</p>
+    <h2>What we use</h2>
+    <p>This site stores onboarding answers in your browser (localStorage) so your starter week can be built. That is not an advertising cookie.</p>
+    <p>We load Anton and Inter Tight from Google Fonts. Google may see your IP to serve the files.</p>
+    <p>Questions: hello@everydaygass.com</p>
   </section>
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p class="footer__logo">Everyday<span>Gass</span></p>
-      <p class="footer__legal">&copy; 2026 EverydayGass</p>
-    </div>
-  </footer>
+  <div data-footer></div>
+  <script src="js/app.js"></script>
+  <script>EG.initPage()</script>
 </body>
 </html>
