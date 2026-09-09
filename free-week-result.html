@@ -52,14 +52,9 @@
           <p><strong>Guidance</strong></p>
           <ul data-guidance style="margin:8px 0 0 18px"></ul>
         </div>
+        <div class="explain-box" data-explanations></div>
         <p class="muted" data-disclaimer style="font-size:.85rem"></p>
-        <div class="upgrade" data-upsell>
-          <p class="eyebrow">Next</p>
-          <h2>Ready to go beyond Week 1?</h2>
-          <p>Your free week is only the starting point. Answer a few more questions and I’ll build your complete 12-week Hybrid Training progression around your goals, experience and schedule.</p>
-          <a class="btn btn--primary btn--full" href="build-my-plan.html" data-upgrade="primary">Build my 12-week plan</a>
-          <button class="btn btn--ghost btn--full" type="button" data-upgrade="later" data-upsell-later style="margin-top:8px">Maybe later</button>
-        </div>
+        <div data-sales></div>
       </div>
     </section>
 
@@ -164,18 +159,26 @@
         <p class="eyebrow">Your Week 1 is ready</p>
         <button type="button" class="sheet__close" data-upsell-close>Close</button>
       </div>
-      <h3 id="upsellTitle" tabindex="-1">Want me to build the other 11 weeks?</h3>
-      <p>You’ve already told me how often you train and what you want to improve. Answer a few more questions and I’ll map out your full 12-week Hybrid Training progression.</p>
-      <p class="muted" style="margin:8px 0 18px">5 quick questions.</p>
-      <a class="btn btn--primary btn--full" href="build-my-plan.html" data-upgrade="sheet">Build my 12-week plan</a>
+      <h3 id="upsellTitle" tabindex="-1">See my 12-week progression</h3>
+      <p>Week 1 is your starting point. A few more questions and I’ll map BUILD, PROGRESS and PERFORM to your goal, level and equipment.</p>
+      <p class="muted" style="margin:8px 0 18px">Short, specific questions. No height or weight theatre.</p>
+      <a class="btn btn--primary btn--full" href="build-my-plan.html" data-upgrade="sheet">See my 12-week progression</a>
       <button class="btn btn--ghost btn--full" type="button" data-upsell-later style="margin-top:8px">I’ll do it later</button>
     </div>
   </div>
 
   <div data-footer></div>
   <script src="js/getPlanId.js"></script>
+  <script src="js/data/weeklyLayouts.js"></script>
+  <script src="js/data/hyroxRaceLoads.js"></script>
+  <script src="js/data/library.js"></script>
+  <script src="js/data/superFinalHyrox7.js"></script>
+  <script src="js/engine/engine.js"></script>
   <script src="js/data/plans.js"></script>
+  <script src="js/quiz/migrateState.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/sales/roadmap.js"></script>
+  <script src="js/ui/planView.js"></script>
   <script src="js/zones.js"></script>
   <script src="js/pdf.js"></script>
   <script src="js/app.js"></script>

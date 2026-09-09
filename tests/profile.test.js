@@ -8,59 +8,51 @@ function ok(cond, msg) {
   n += 1;
 }
 
-ok(EGProfile.QUESTIONS.length <= 6, "at most 6 quiz2 questions");
-ok(EGProfile.QUESTIONS.every((q) => !["strengthBase", "trainingAccess", "priority", "daysPerWeek"].includes(q.field)), "no quiz1 fields");
-
 const quiz1 = {
   priority: "running",
   daysPerWeek: 5,
   level: "intermediate",
   runningBase: "10k",
+  runningGoal: "10k",
   strengthBase: "some",
-  trainingAccess: "full_gym"
+  equipmentProfile: "full_hyrox"
 };
 const quiz2 = {
-  runningVolume: "10to20",
-  target: "hyrox",
+  result: "race",
   eventWindow: "8to12",
+  runningVolume: "10to20",
   sessionMinutes: "45",
-  limitation: "endurance",
-  success: "race"
+  benchmark: "5k",
+  runningTarget: "10k"
 };
 
-ok(EGProfile.questionsFor(quiz2).length === 6, "event question included for HYROX");
-ok(EGProfile.questionsFor({ target: "hybrid" }).length === 5, "no event question for general fitness");
-ok(EGProfile.isComplete(quiz2), "complete hyrox answers");
-ok(!EGProfile.isComplete({ runningVolume: "10to20", target: "hyrox" }), "incomplete");
+ok(EGProfile.questionsFor(quiz2, quiz1).length <= 6, "at most 6 quiz2 questions");
+ok(EGProfile.questionsFor(quiz2, quiz1).every((q) => !["strengthBase", "trainingAccess", "priority", "daysPerWeek"].includes(q.field)), "no quiz1 fields");
+ok(EGProfile.questionsFor(quiz2, { priority: "hyrox" }).some((q) => q.field === "limitingFactor"), "hyrox limitation question");
+ok(EGProfile.questionsFor({ result: "hybrid" }, { priority: "balanced" }).length === 6, "universal + balanced focus");
+ok(EGProfile.isComplete(quiz2, quiz1), "complete answers");
+ok(!EGProfile.isComplete({ runningVolume: "10to20", result: "race" }, quiz1), "incomplete");
 
 const profile = EGProfile.build(quiz1, quiz2);
 ok(profile.trainingDays === 5, "days from quiz1");
 ok(profile.priority === "running", "priority from quiz1");
 ok(profile.runningLevel === "10k", "running level from quiz1");
 ok(profile.strengthLevel === "some", "strength from quiz1");
-ok(profile.equipment === "full_gym", "equipment from quiz1");
+ok(profile.equipment === "full_hyrox", "equipment from quiz1");
 ok(profile.sessionMinutes === 45, "session length from quiz2");
-ok(profile.target === "hyrox", "target from quiz2");
-ok(profile.limitation === "endurance", "limitation from quiz2");
+ok(profile.target === "race", "result mapped to target");
 ok(profile.eventDate === "8to12", "event window stored");
 
 const lines = EGProfile.summaryLines(profile);
 ok(lines.some((l) => l.includes("5 training days")), "days in summary");
 ok(lines.some((l) => /running/i.test(l)), "priority in summary");
-ok(lines.some((l) => /HYROX/i.test(l)), "target in summary");
-ok(lines.some((l) => /endurance/i.test(l)), "limitation in summary");
-ok(lines.some((l) => /Full gym/i.test(l)), "equipment in summary");
+ok(lines.some((l) => /HYROX|Full gym/i.test(l)), "equipment in summary");
 
 const road = EGProfile.roadmap(profile);
 ok(road.length === 3, "three roadmap blocks");
-ok(road[0].weeks === "Weeks 1–4" && /base/i.test(road[0].title), "block 1");
-ok(road[1].weeks === "Weeks 5–8" && /volume/i.test(road[1].title), "block 2");
-ok(road[2].weeks === "Weeks 9–12" && /progression/i.test(road[2].title), "block 3");
-ok(/endurance/i.test(road[0].detail), "roadmap uses limitation");
-ok(/aerobic/i.test(road[0].title) || /running/i.test(road[2].detail), "running priority wording");
-
-const balanced = EGProfile.roadmap({ priority: "balanced", limitation: "consistency" });
-ok(balanced[0].title === "Build your base", "balanced uses spec titles");
+ok(road[0].title === "BUILD", "block 1 BUILD");
+ok(road[1].title === "PROGRESS", "block 2 PROGRESS");
+ok(road[2].title === "PERFORM", "block 3 PERFORM");
 ok(EGProfile.OFFER_ITEMS.length >= 8, "offer list");
 ok(EGProfile.PREMIUM_ITEMS.length === 4, "premium bullets");
 ok(EGProfile.PREMIUM_ITEMS.some((item) => /FIT Cookbook/i.test(item)), "cookbook");

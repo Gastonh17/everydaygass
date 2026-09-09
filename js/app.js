@@ -83,84 +83,7 @@ window.EG = (() => {
     }
   }
 
-  const QUESTIONS = [
-    {
-      id: "priority",
-      title: "What do you want to improve most right now?",
-      field: "priority",
-      options: [
-        ["running", "Running", "More engine. Still lift."],
-        ["strength", "Strength", "Get stronger. Keep the engine."],
-        ["balanced", "Balanced Hybrid", "Run. Lift. Condition. Recover."],
-        ["hyrox", "HYROX", "Race flavour without elite volume."]
-      ]
-    },
-    {
-      id: "daysPerWeek",
-      title: "How many days can you realistically train each week?",
-      field: "daysPerWeek",
-      options: [
-        ["3", "3 days", "Enough to start"],
-        ["4", "4 days", "The usual busy-week fit"],
-        ["5", "5 days", "Only if this is honest"],
-        ["6", "6 days", "High frequency, still recoverable"],
-        ["7", "7 days", "Six sessions + one easy recovery"]
-      ]
-    },
-    {
-      id: "level",
-      title: "How would you describe your current training level?",
-      field: "level",
-      options: [
-        ["beginner", "Beginner", "Building the habit"],
-        ["intermediate", "Intermediate", "I train, I want structure"],
-        ["advanced", "Advanced", "I can handle load — still not medical advice"]
-      ]
-    },
-    {
-      id: "runningBase",
-      title: "Which best describes your current running?",
-      field: "runningBase",
-      options: [
-        ["new", "New to running", "Walk-run is honest"],
-        ["5k", "Can run 5K", "I can jog it"],
-        ["10k", "10K+ regularly", "I have a base"],
-        ["performance", "Performance-focused", "I already chase times"]
-      ]
-    },
-    {
-      id: "strengthBase",
-      title: "How experienced are you with strength training?",
-      field: "strengthBase",
-      options: [
-        ["new", "New", "Teach me the patterns"],
-        ["some", "Some experience", "I know the basics"],
-        ["consistent", "Consistent", "I lift most weeks"],
-        ["advanced", "Advanced", "I can load the lifts"]
-      ]
-    },
-    {
-      id: "trainingAccess",
-      title: "Where will you train most?",
-      field: "trainingAccess",
-      options: [
-        ["full_gym", "Full gym", "Bar, machines, dumbbells"],
-        ["basic_gym", "Basic gym", "Dumbbells, cables, a bench"],
-        ["home_run", "Home + running", "Minimal kit + outside"],
-        ["mixed", "Mixed", "It depends on the day"]
-      ]
-    },
-    {
-      id: "hasConstraints",
-      title: "Any injury, pain, medical restriction or pregnancy that may affect training?",
-      field: "hasConstraints",
-      confirm: true,
-      options: [
-        ["no", "No", "I’ll use the generic week"],
-        ["yes", "Yes", "I’ll still see the generic week — with a caution"]
-      ]
-    }
-  ];
+  const QUESTIONS = () => (window.EGQuiz ? EGQuiz.questionsFor(EGStorage.read()) : []);
 
   function optionList(q, selected) {
     return `<div class="option-list">${q.options.map(([value, title, sub]) => `
@@ -173,7 +96,7 @@ window.EG = (() => {
     mountChrome();
     const grid = qs("[data-priorities]");
     if (!grid) return;
-    const items = QUESTIONS[0].options;
+    const items = (window.EGQuiz?.PRIORITY) || QUESTIONS()[0]?.options || [];
     grid.innerHTML = items.map(([id, title, sub]) => `
       <a class="goal-card" href="free-week.html?priority=${id}">
         <span class="goal-card__mark">${title.slice(0, 2).toUpperCase()}</span>
@@ -189,6 +112,7 @@ window.EG = (() => {
       state.priority = params.get("priority");
       EGStorage.write(state);
     }
+    track("quiz_start", { source: params.get("src") || "site" });
     track("free_week_started", { source: params.get("src") || "site" });
 
     const root = qs("#quiz");
@@ -197,19 +121,51 @@ window.EG = (() => {
     const back = qs("#backBtn");
     const next = qs("#nextBtn");
     let step = state.priority && params.get("priority") ? 1 : 0;
+    let lead = false;
+
+    function list() {
+      return QUESTIONS();
+    }
+
+    function paintLead() {
+      bar.style.width = "100%";
+      stepLabel.textContent = "Email";
+      back.disabled = false;
+      next.hidden = false;
+      next.textContent = "Open my week";
+      root.innerHTML = `
+        <p class="eyebrow">Your week is ready</p>
+        <h1>Your personalized starter week is ready.</h1>
+        <p class="lead">Enter your email to open it and keep a copy.</p>
+        <div class="field"><label for="leadName">First name</label>
+          <input id="leadName" name="firstName" autocomplete="given-name" value="${state.firstName || ""}" /></div>
+        <div class="field"><label for="leadEmail">Email</label>
+          <input id="leadEmail" name="email" type="email" autocomplete="email" inputmode="email" value="${state.email || ""}" /></div>
+        <p class="muted" data-lead-err hidden>Add a first name and a valid email.</p>`;
+      track("lead_capture_view");
+    }
 
     function paint() {
-      const q = QUESTIONS[step];
-      const total = QUESTIONS.length;
+      if (lead) return paintLead();
+      const questions = list();
+      const q = questions[step];
+      const total = questions.length;
       bar.style.width = `${((step + 1) / total) * 100}%`;
       stepLabel.textContent = `${step + 1} / ${total}`;
       back.disabled = step === 0;
       next.hidden = !q.confirm;
-      next.textContent = step === total - 1 ? "See my week" : "Continue";
+      next.textContent = "Continue";
       let selected = state[q.field];
       if (q.field === "hasConstraints") selected = selected === true ? "yes" : selected === false ? "no" : "";
       else selected = selected == null ? "" : String(selected);
-      root.innerHTML = `<h1>${q.title}</h1>${optionList(q, selected)}`;
+      const chips = q.chips && state.hasConstraints === true
+        ? `<p class="quiz-hint">Optional — tap what you need to avoid. This is not a rehab plan.</p>
+           <div class="chip-select">${q.chips.map(([value, label]) => `
+             <button type="button" class="chip-opt ${(state.constraintTags || []).includes(value) ? "is-on" : ""}" data-chip="${value}">${label}</button>`).join("")}</div>
+           <div class="field"><label for="constraintText">Anything else (optional, 160 characters)</label>
+             <textarea id="constraintText" maxlength="160">${state.constraintText || ""}</textarea></div>`
+        : "";
+      root.innerHTML = `${q.hint ? `<p class="quiz-hint">${q.hint}</p>` : ""}<h1>${q.title}</h1>${optionList(q, selected)}${chips}`;
       qsa("[data-field]", root).forEach((btn) => {
         btn.addEventListener("click", () => {
           const field = btn.dataset.field;
@@ -217,40 +173,97 @@ window.EG = (() => {
           if (field === "daysPerWeek") value = Number(value);
           if (field === "hasConstraints") value = value === "yes";
           state[field] = value;
+          if (field === "hasConstraints" && value !== true) {
+            state.constraintTags = [];
+            state.constraintText = "";
+          }
           EGStorage.patch(state);
-          track("question_answered", { questionId: q.id, answerKey: String(btn.dataset.value), step: step + 1 });
+          track("quiz_answer", { questionId: q.id, answerKey: String(btn.dataset.value), step: step + 1, priority: state.priority });
           qsa(".option", root).forEach((b) => b.classList.toggle("is-selected", b === btn));
+          if (q.confirm && value === true) {
+            paint();
+            return;
+          }
           if (!q.confirm) setTimeout(() => go(1), 160);
         });
+      });
+      qsa("[data-chip]", root).forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tags = new Set(state.constraintTags || []);
+          if (tags.has(btn.dataset.chip)) tags.delete(btn.dataset.chip);
+          else tags.add(btn.dataset.chip);
+          state.constraintTags = [...tags];
+          EGStorage.patch(state);
+          paint();
+        });
+      });
+      qs("#constraintText")?.addEventListener("input", (e) => {
+        state.constraintText = String(e.target.value).slice(0, 160);
+        EGStorage.patch(state);
       });
     }
 
     function go(delta) {
+      const questions = list();
+      if (lead && delta < 0) {
+        lead = false;
+        step = questions.length - 1;
+        paint();
+        return;
+      }
       const nextStep = step + delta;
       if (nextStep < 0) return;
-      if (nextStep >= QUESTIONS.length) return finish();
+      if (nextStep >= questions.length) {
+        lead = true;
+        paint();
+        return;
+      }
       step = nextStep;
       paint();
+    }
+
+    function validEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
     }
 
     function finish() {
       const planId = EGPlanId.getPlanId(state.priority, state.daysPerWeek);
       if (!planId) {
+        lead = false;
         step = state.priority ? 1 : 0;
         paint();
         return;
       }
+      if (lead) {
+        const name = qs("#leadName")?.value.trim() || "";
+        const email = qs("#leadEmail")?.value.trim() || "";
+        const err = qs("[data-lead-err]");
+        if (!name || !validEmail(email)) {
+          if (err) err.hidden = false;
+          return;
+        }
+        state.firstName = name;
+        state.email = email;
+        state.leadCapturedAt = Date.now();
+        track("lead_submitted", { priority: state.priority });
+      }
       EGStorage.patch({ ...state, planId, completedAt: Date.now() });
+      track("quiz_complete", { priority: state.priority, daysPerWeek: state.daysPerWeek, level: state.level, runningGoal: state.runningGoal });
       track("free_week_completed", { priority: state.priority, daysPerWeek: state.daysPerWeek, level: state.level });
-      location.href = `free-week-result.html?priority=${state.priority}&days=${state.daysPerWeek}`;
+      location.href = `free-week-result.html?priority=${state.priority}&days=${state.daysPerWeek}&level=${state.level || ""}`;
     }
 
     back.addEventListener("click", () => go(-1));
     next.addEventListener("click", () => {
-      const q = QUESTIONS[step];
+      if (lead) return finish();
+      const q = list()[step];
       if (state[q.field] === undefined) return;
-      if (step === QUESTIONS.length - 1) finish();
-      else go(1);
+      if (step === list().length - 1) {
+        lead = true;
+        paint();
+        return;
+      }
+      go(1);
     });
 
     paint();
@@ -261,9 +274,13 @@ window.EG = (() => {
     const state = EGStorage.read();
     const priority = params.get("priority") || state.priority;
     const days = Number(params.get("days") || state.daysPerWeek);
+    const level = params.get("level") || state.level;
     const planId = EGPlanId.getPlanId(priority, days) || state.planId;
-    const plan = planId ? EGPlans.getPlan(planId) : null;
-    return { state, plan, planId };
+    const profile = { ...state, priority, daysPerWeek: days, level };
+    const plan = window.EGEngine
+      ? EGEngine.buildFreeWeek(profile)
+      : (planId ? EGPlans.getPlan(planId) : null);
+    return { state, plan, planId: plan?.id || planId, profile };
   }
 
   function exerciseRows(list = []) {
@@ -279,28 +296,30 @@ window.EG = (() => {
   }
 
   function renderPlan(plan, mount, { openFirst = true } = {}) {
-    mount.innerHTML = plan.sessions.map((s, i) => `
-      <article class="workout ${openFirst && i === 0 ? "" : "is-collapsed"}" data-i="${i}">
-        <button type="button" class="workout__head" data-toggle>
-          <div>
-            <p class="workout__day">Day ${s.day}</p>
-            <h3>${s.title}</h3>
+    if (window.EGPlanView) EGPlanView.renderWeek(plan, mount, { openFirst });
+    else {
+      mount.innerHTML = plan.sessions.map((s, i) => `
+        <article class="workout ${openFirst && i === 0 ? "" : "is-collapsed"}" data-i="${i}">
+          <button type="button" class="workout__head" data-toggle>
+            <div>
+              <p class="workout__day">${s.dayName || `Day ${s.day}`}</p>
+              <h3>${s.title}</h3>
+            </div>
+            <span class="tag tag--${s.type}">${TYPE_LABEL[s.type] || s.type}</span>
+          </button>
+          <p class="workout__meta">${window.EGPlanView ? EGPlanView.durationText(s) : (s.durationMin || "")} · ${s.intensityLabel || s.intensity || ""}</p>
+          <div class="workout__body">
+            ${s.coachNote ? `<p class="muted" style="margin:10px 0 6px">${s.coachNote}</p>` : ""}
+            ${s.warmup?.length ? `<p class="ex-label">Warm-up</p>${exerciseRows(s.warmup)}` : ""}
+            <p class="ex-label">Main</p>
+            ${exerciseRows(s.main)}
+            ${s.cooldown?.length ? `<p class="ex-label">Cool-down</p>${exerciseRows(s.cooldown)}` : ""}
           </div>
-          <span class="tag tag--${s.type}">${TYPE_LABEL[s.type] || s.type}</span>
-        </button>
-        <p class="workout__meta">${s.durationMin ? `${s.durationMin} min` : ""} · ${s.intensity || ""}</p>
-        <div class="workout__body">
-          ${s.coachNote ? `<p class="muted" style="margin:10px 0 6px">${s.coachNote}</p>` : ""}
-          ${s.warmup?.length ? `<p class="ex-label">Warm-up</p>${exerciseRows(s.warmup)}` : ""}
-          <p class="ex-label">Main</p>
-          ${exerciseRows(s.main)}
-          ${s.cooldown?.length ? `<p class="ex-label">Cool-down</p>${exerciseRows(s.cooldown)}` : ""}
-        </div>
-      </article>`).join("");
-
-    qsa("[data-toggle]", mount).forEach((btn) => {
-      btn.addEventListener("click", () => btn.closest(".workout").classList.toggle("is-collapsed"));
-    });
+        </article>`).join("");
+      qsa("[data-toggle]", mount).forEach((btn) => {
+        btn.addEventListener("click", () => btn.closest(".workout").classList.toggle("is-collapsed"));
+      });
+    }
     qsa("[data-video]", mount).forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -335,9 +354,10 @@ window.EG = (() => {
   }
 
   function weekOverview(plan) {
+    if (window.EGPlanView) return EGPlanView.weekOverview(plan);
     return `<ol class="week-overview">${plan.sessions.map((s) => `
       <li>
-        <span>Day ${s.day}</span>
+        <span>${s.dayName || `Day ${s.day}`}</span>
         <strong>${TYPE_LABEL[s.type]}</strong>
         <em>${s.title}</em>
       </li>`).join("")}</ol>`;
@@ -530,23 +550,32 @@ window.EG = (() => {
     track("plan_viewed", { planId: plan.id, priority: plan.priority, daysPerWeek: plan.daysPerWeek });
 
     qs("[data-title]").textContent = `Your ${plan.title}`;
+    const goalChip = (window.EGRoadmap?.GOAL_LABEL || {})[plan.runningGoal] || plan.runningGoal;
     qs("[data-meta]").innerHTML = `
       <span class="chip">${plan.daysPerWeek} days</span>
-      <span class="chip">${plan.priority}</span>`;
+      <span class="chip">${plan.priority}</span>
+      <span class="chip">${plan.level}</span>
+      ${goalChip ? `<span class="chip">${goalChip}</span>` : ""}`;
     qs("[data-intro]").textContent = plan.intro;
     qs("[data-overview]").innerHTML = weekOverview(plan);
     renderPlan(plan, qs("[data-week]"));
+    const notes = qs("[data-explanations]");
+    if (notes) {
+      notes.innerHTML = (plan.explanations || []).map((e) => `<p>${e.text}</p>`).join("");
+    }
     qs("[data-guidance]").innerHTML = plan.weeklyGuidance.map((g) => `<li>${g}</li>`).join("");
     qs("[data-disclaimer]").textContent = plan.disclaimer;
+    paintRoadmapPreview(state, plan);
 
     const caution = qs("[data-caution]");
     if (state.hasConstraints) {
       caution.hidden = false;
-      caution.textContent = "You flagged a constraint. This generic week is not individualized medical advice. Get professional clearance where appropriate — you can still use the structure as a starting point.";
+      caution.textContent = "You flagged a limitation. This is not a rehabilitation plan. Conservative swaps are applied only when the tag maps to a movement. Get professional clearance where appropriate.";
     } else caution.hidden = true;
 
     qs("[data-pdf]").addEventListener("click", () => {
       EGStorage.patch({ freeWeekDownloaded: true });
+      track("free_plan_pdf_download", { planId: plan.id });
       track("free_week_downloaded", { planId: plan.id });
       downloadPdf(plan, state);
       window.setTimeout(() => showUpsellSheet("pdf"), 600);
@@ -563,8 +592,54 @@ window.EG = (() => {
         track("upgrade_clicked", { planId: plan.id, placement: el.dataset.upgrade });
       });
     });
+    track("free_plan_view", { planId: plan.id, priority: plan.priority, days: plan.daysPerWeek, level: plan.level, runningGoal: plan.runningGoal });
     initBasics();
     initUpsellSheet(plan);
+  }
+
+  function paintRoadmapPreview(state, plan) {
+    const mount = qs("[data-sales]");
+    if (!mount || !window.EGRoadmap) return;
+    const examples = EGRoadmap.progressionExamples(state);
+    const blocks = EGRoadmap.blocks(state);
+    const locked = EGRoadmap.lockedWeeks(state).slice(0, 6);
+    const preview = EGRoadmap.preview(state);
+    track("roadmap_view", { priority: state.priority, runningGoal: state.runningGoal });
+    mount.innerHTML = `
+      <div class="sales-block">
+        <p class="eyebrow">Your first week is ready</p>
+        <h2>This is Week 1. Here is what changes next.</h2>
+        <ol class="roadmap">${blocks.map((b) => `
+          <li><span>${b.weeks}</span><strong>${b.title}</strong><p>${b.detail}</p></li>`).join("")}</ol>
+      </div>
+      <div class="sales-block">
+        <p class="eyebrow">Your progression</p>
+        <h2>Examples from your profile</h2>
+        <ol class="progress-examples">${examples.map((ex) => `
+          <li><span>Week ${ex.week}</span><p>${ex.text}</p></li>`).join("")}</ol>
+      </div>
+      ${preview?.session ? `
+      <div class="sales-block">
+        <p class="eyebrow">Later in the plan</p>
+        <h2>A Week ${preview.week} session</h2>
+        <p class="lead">Your plan progressively prepares you for sessions like this — without jumping ahead before you are ready.</p>
+        ${EGPlanView.renderSession(preview.session, 0, { openFirst: true })}
+      </div>` : ""}
+      <div class="sales-block">
+        <p class="eyebrow">Weeks 2–12</p>
+        <h2>The structure is already mapped</h2>
+        <div class="locked-grid">${locked.map((w) => EGPlanView.lockedCard(w)).join("")}</div>
+      </div>
+      <div class="upgrade" data-upsell>
+        <p class="eyebrow">Next</p>
+        <h2>See my 12-week progression</h2>
+        <p>Week 1 is your starting point. Answer a few more questions and I’ll map the full BUILD / PROGRESS / PERFORM path to your goal.</p>
+        <a class="btn btn--primary btn--full" href="build-my-plan.html" data-upgrade="primary" data-roadmap-cta>See my 12-week progression</a>
+        <button class="btn btn--ghost btn--full" type="button" data-upgrade="later" data-upsell-later style="margin-top:8px">Maybe later</button>
+      </div>`;
+    qs("[data-roadmap-cta]", mount)?.addEventListener("click", () => {
+      track("roadmap_cta_click", { planId: plan.id, priority: plan.priority });
+    });
   }
 
   function upsellBlocked() {
@@ -676,6 +751,11 @@ window.EG = (() => {
         <p>${block.detail}</p>
       </li>`).join("");
     qs("[data-subs]", offer).textContent = EGProfile.substitutions(profile);
+    qs("[data-mapped]", offer)?.removeAttribute("hidden");
+    const lockedMount = qs("[data-locked-weeks]", offer);
+    if (lockedMount && window.EGRoadmap && window.EGPlanView) {
+      lockedMount.innerHTML = EGRoadmap.lockedWeeks(profile).map((w) => EGPlanView.lockedCard(w)).join("");
+    }
     qs("[data-offer-list]", offer).innerHTML = EGProfile.OFFER_ITEMS.map((item) => `<li>${item}</li>`).join("");
     const premiumList = qs("[data-premium-list]", offer);
     if (premiumList) {
@@ -687,7 +767,9 @@ window.EG = (() => {
     const notePremium = qs("[data-pay-note-premium]", offer);
     if (note) note.textContent = payCopy("plan12");
     if (notePremium) notePremium.textContent = payCopy("premium");
-    EGStorage.patch({ paidOfferViewed: true });
+    EGStorage.patch({ paidOfferViewed: true, mappedAt: Date.now() });
+    track("offer_view", { priority: profile.priority, target: profile.target });
+    track("price_view", { priority: profile.priority });
     track("paid_offer_viewed", { priority: profile.priority, target: profile.target });
   }
 
@@ -695,6 +777,7 @@ window.EG = (() => {
     qsa("[data-checkout]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const product = btn.dataset.checkout || "plan12";
+        track("checkout_start", { product, priority: profile.priority });
         track("checkout_clicked", { product, priority: profile.priority });
         EGCheckout.start(profile, product);
       });
@@ -711,13 +794,14 @@ window.EG = (() => {
 
     const generating = qs("#generating");
     const quiz2 = stored.quiz2 || {};
-    if (EGProfile.isComplete(quiz2) || stored.secondQuizCompleted) {
+    if (EGProfile.isComplete(quiz2, stored) || stored.secondQuizCompleted) {
       const profile = EGProfile.build(stored, quiz2);
       paintOffer(profile);
       bindCheckout(profile);
       return;
     }
 
+    track("premium_quiz_start", { priority: stored.priority, daysPerWeek: stored.daysPerWeek });
     track("second_quiz_started", { priority: stored.priority, daysPerWeek: stored.daysPerWeek });
     EGStorage.patch({ secondQuizStarted: true });
 
@@ -729,7 +813,7 @@ window.EG = (() => {
     let step = 0;
 
     function questions() {
-      return EGProfile.questionsFor(answers);
+      return EGProfile.questionsFor(answers, stored);
     }
 
     function paint() {
@@ -768,18 +852,37 @@ window.EG = (() => {
     }
 
     function finish() {
-      if (!EGProfile.isComplete(answers)) {
+      if (!EGProfile.isComplete(answers, stored)) {
         paint();
         return;
       }
       EGStorage.patch({ quiz2: answers, secondQuizCompleted: true, secondQuizCompletedAt: Date.now() });
-      track("second_quiz_completed", { target: answers.target, limitation: answers.limitation });
+      track("premium_quiz_complete", { result: answers.result, limitingFactor: answers.limitingFactor });
+      track("second_quiz_completed", { target: answers.result, limitation: answers.limitingFactor });
       const profile = EGProfile.build(EGStorage.read(), answers);
-      if (generating) generating.hidden = false;
+      if (window.EGEngine) EGEngine.build12WeekSummaries(profile, answers);
+      if (generating) {
+        generating.hidden = false;
+        const line = qs("[data-map-line]", generating);
+        const lines = [
+          "Mapping your weekly structure...",
+          "Adapting sessions to your level...",
+          "Matching your running goal...",
+          "Applying your equipment setup...",
+          "Building your 12-week progression..."
+        ];
+        let i = 0;
+        if (line) line.textContent = lines[0];
+        const tick = window.setInterval(() => {
+          i += 1;
+          if (line && lines[i]) line.textContent = lines[i];
+          if (i >= lines.length - 1) window.clearInterval(tick);
+        }, 520);
+      }
       window.setTimeout(() => {
         paintOffer(profile);
         bindCheckout(profile);
-      }, 1400);
+      }, 2800);
     }
 
     back.addEventListener("click", () => go(-1));

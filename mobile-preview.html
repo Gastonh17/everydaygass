@@ -21,33 +21,34 @@
     h1 { font-size: 1.1rem; margin: 0 0 6px; letter-spacing: .12em; text-transform: uppercase; }
     p { margin: 0 0 18px; color: #6A6A6A; font-size: .9rem; text-align: center; max-width: 420px; }
     .phone {
-      width: 390px;
-      height: 844px;
-      max-height: calc(100vh - 120px);
+      width: 417px;
+      height: 876px;
       background: var(--bezel);
-      border-radius: 44px;
+      border-radius: 55px;
       padding: 12px;
       box-shadow: 0 30px 80px rgba(0,0,0,.18);
       position: relative;
+      flex-shrink: 0;
     }
     .phone::before {
       content: "";
       position: absolute;
-      top: 18px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
-      height: 28px;
+      width: 126px;
+      height: 37px;
       background: #000;
-      border-radius: 20px;
+      border-radius: 24px;
       z-index: 2;
     }
     iframe {
-      width: 100%;
-      height: 100%;
+      width: 393px;
+      height: 852px;
       border: 0;
-      border-radius: 34px;
+      border-radius: 47px;
       background: #fff;
+      display: block;
     }
     nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
     a.chip {
@@ -65,14 +66,14 @@
   </style>
 </head>
 <body>
-  <h1>iPhone preview · 390 × 844</h1>
+  <h1>iPhone 15 · 393 × 852</h1>
   <p>This is the site as it should feel on a phone. Click inside the device to use the quiz.</p>
   <nav>
     <a class="chip" href="#" data-src="index.html">Home</a>
     <a class="chip" href="#" data-src="free-week.html">Quiz</a>
     <a class="chip" href="#" data-src="free-week-result.html?priority=balanced&days=4">Sample week</a>
     <a class="chip" href="#" data-src="build-my-plan.html">12-week quiz</a>
-    <a class="chip is-ghost" href="index.html">Open full desktop</a>
+    <a class="chip is-ghost" href="index.html" target="_blank" rel="noopener">Open full desktop</a>
   </nav>
   <div class="phone">
     <iframe id="frame" src="index.html" title="EverydayGass mobile"></iframe>

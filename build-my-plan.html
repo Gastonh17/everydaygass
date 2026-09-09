@@ -27,21 +27,26 @@
   <div class="generating" id="generating" hidden>
     <div>
       <div class="pulse" aria-hidden="true"></div>
-      <p class="eyebrow">Personalizing</p>
-      <h1>Building your 12-week progression…</h1>
+      <p class="eyebrow">Mapping</p>
+      <h1 data-map-line>Mapping your weekly structure...</h1>
     </div>
   </div>
 
   <section class="offer" id="offer" hidden>
     <div class="wrap">
-      <p class="eyebrow">Your profile</p>
-      <h1>Your 12-week progression, mapped to you.</h1>
+      <p class="eyebrow">Your 12-Week Training Profile</p>
+      <h1>Your 12-week progression has been mapped.</h1>
+      <p class="mapped-note" data-mapped hidden>The plan rules have been evaluated against your answers. This is not a random workout.</p>
       <ul class="profile-lines" data-profile-lines></ul>
 
       <p class="eyebrow" style="margin-top:28px">Roadmap</p>
-      <h2>From Week 1 to Week 12.</h2>
+      <h2>BUILD → PROGRESS → PERFORM</h2>
       <ol class="roadmap" data-roadmap></ol>
-      <p class="muted" data-subs style="margin:8px 0 0"></p>
+      <p class="muted" data-subs style="margin:8px 0 16px"></p>
+
+      <p class="eyebrow">Locked weeks</p>
+      <h2>The structure is already mapped</h2>
+      <div class="locked-grid" data-locked-weeks></div>
 
       <div class="offer-stack">
         <article class="offer-card" data-offer>
@@ -69,8 +74,16 @@
   </section>
 
   <script src="js/getPlanId.js"></script>
+  <script src="js/data/weeklyLayouts.js"></script>
+  <script src="js/data/hyroxRaceLoads.js"></script>
+  <script src="js/data/library.js"></script>
+  <script src="js/data/superFinalHyrox7.js"></script>
+  <script src="js/engine/engine.js"></script>
+  <script src="js/quiz/migrateState.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/sales/roadmap.js"></script>
   <script src="js/profile.js"></script>
+  <script src="js/ui/planView.js"></script>
   <script src="js/checkout.js"></script>
   <script src="js/app.js"></script>
   <script>EG.initBuildPlan()</script>

@@ -1,14 +1,23 @@
 (function (root) {
-  const KEY = "hybridFreeWeek:v1";
+  if (typeof require !== "undefined" && !root.EGMigrate) {
+    require("./quiz/migrateState.js");
+  }
+  const Migrate = root.EGMigrate;
+  const KEY = (Migrate && Migrate.V2) || "hybridFreeWeek:v2";
+
+  if (Migrate && typeof localStorage !== "undefined") Migrate.ensureV2();
 
   function read() {
-    try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
-    catch { return {}; }
+    try {
+      const raw = JSON.parse(localStorage.getItem(KEY)) || {};
+      return Migrate ? Migrate.migrate(raw) : raw;
+    } catch { return {}; }
   }
 
   function write(state) {
-    localStorage.setItem(KEY, JSON.stringify(state));
-    return state;
+    const next = Migrate ? Migrate.migrate(state) : state;
+    localStorage.setItem(KEY, JSON.stringify(next));
+    return next;
   }
 
   function patch(partial) {
@@ -20,4 +29,5 @@
   }
 
   root.EGStorage = { KEY, read, write, patch, clear };
+  if (typeof module !== "undefined") module.exports = root.EGStorage;
 })(typeof window !== "undefined" ? window : globalThis);
