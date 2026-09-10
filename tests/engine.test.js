@@ -100,7 +100,23 @@ ok(Object.keys(Race.RACE_LOADS.categories).length >= 2, "race loads from config"
 
 ok(full.isMaster && full.masterId === "Advanced_7_Days_HYROX_Focus_SUPER_FINAL", "advanced 7d HYROX uses SUPER_FINAL master");
 ok(full.sessions[0].title === "Legs / Shoulders / Triceps", "master gym 1 title");
+ok(full.sessions[0].durationMin.min >= 70, "master gym 1 stays a full session");
 ok(full.sessions[6].title === "No-Run", "master Sunday is no-run HYROX");
+
+const hyrox5 = Engine.buildFreeWeek({
+  priority: "hyrox",
+  daysPerWeek: 5,
+  level: "advanced",
+  runningBase: "endurance",
+  runningGoal: "halfMarathon",
+  strengthBase: "advanced",
+  equipmentProfile: "full_hyrox"
+});
+ok(hyrox5.isMaster, "advanced 5d HYROX uses the same master gym");
+ok(hyrox5.sessions[0].title === "Legs / Shoulders / Triceps", "5d gym 1 is the master lift day");
+ok(hyrox5.sessions[0].durationMin.min >= 70, "5d gym 1 is not shortened");
+ok(hyrox5.sessions[0].main.filter((ex) => !/plank|v-up|side bend/i.test(ex.name)).length >= 8, "5d gym 1 keeps 8 lifts");
+ok(hyrox5.sessions[4].type === "recovery", "5d drops Friday gym instead of cutting Monday");
 
 const noRun = full.sessions.find((s) => s.subtype === "hyroxStations");
 ok(noRun && /500 m|250 m|400 m|erg|Ski|Row|Cardio/i.test(JSON.stringify(noRun.main[0]) + JSON.stringify(noRun.main[1])), "no-run starts with erg");
@@ -152,5 +168,23 @@ const advStrength = Engine.buildFreeWeek({
   equipmentProfile: "full_hyrox"
 });
 ok(JSON.stringify(newStrength.sessions) !== JSON.stringify(advStrength.sessions), "strengthBase changes lifts");
+ok(newStrength.isMaster && advStrength.isMaster, "strength plans start from the master week");
+ok(!/Top 1 x/i.test(JSON.stringify(newStrength.sessions)), "beginner strength has no true top set");
+ok(/Top 1 x/i.test(JSON.stringify(advStrength.sessions)), "advanced strength keeps master top sets");
+ok(beginner.isMaster && advanced.isMaster, "running plans start from the master week");
+
+const balancedHome = Engine.buildFreeWeek({
+  priority: "balanced",
+  daysPerWeek: 6,
+  level: "intermediate",
+  runningBase: "10k",
+  runningGoal: "10k",
+  strengthBase: "some",
+  equipmentProfile: "minimal_home"
+});
+ok(balancedHome.isMaster, "balanced plans start from the master week");
+ok(!/SkiErg|RowErg|Sled Push|Lat Pulldown|Leg Press/i.test(
+  JSON.stringify(balancedHome.sessions.flatMap((s) => (s.main || []).map((i) => i.name)))
+), "balanced home substitutes master kit");
 
 console.log(`ok ${n} engine assertions`);

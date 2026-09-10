@@ -1,5 +1,6 @@
 /* Master: Advanced_7_Days_HYROX_Focus_SUPER_FINAL — 12 weeks, 14-page mobile plan. */
 (function (root) {
+  if (typeof require !== "undefined" && !root.EGLibrary) require("./library.js");
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   const COVER = {
@@ -483,7 +484,11 @@
       objective: spec.objective || "",
       callouts: enrichRunNotes(spec, week),
       coachNote: spec.focus || "",
-      main: spec.steps ? spec.steps.map((line) => ({ kind: "step", name: line })) : []
+      main: spec.steps
+        ? spec.steps.map((line) => ({ kind: "step", name: line }))
+        : spec.objective
+          ? [{ kind: "step", name: spec.objective.replace(/^Session:\s*/i, "") }]
+          : []
     };
   }
 
@@ -509,11 +514,236 @@
     return (week % 2 === 1 ? ODD_CORE : EVEN_CORE)[gymIndex];
   }
 
-  function matches(profile = {}) {
-    return profile.priority === "hyrox" && Number(profile.daysPerWeek) === 7 && profile.level === "advanced";
+  function recoverySession(day) {
+    return {
+      day,
+      dayName: DAYS[day - 1],
+      type: "recovery",
+      subtype: "recovery",
+      title: "Rest",
+      durationMin: { min: 20, max: 30 },
+      duration: "Rest",
+      intensityLabel: "Off",
+      main: [{ kind: "step", name: "Rest or easy walk", prescription: "Complete rest or 20–30 min easy walk." }],
+      objective: "Complete rest or an easy 20–30 min walk. Gym sessions stay full-length; this day is empty on purpose."
+    };
   }
 
-  function weekAsPlan(weekNumber, ctx = {}) {
+  const KEEP = {
+    hyrox: {
+      3: [1, 1, 0, 1, 0, 0, 0],
+      4: [1, 1, 0, 1, 0, 0, 1],
+      5: [1, 1, 1, 1, 0, 0, 1],
+      6: [1, 1, 1, 1, 0, 1, 1],
+      7: [1, 1, 1, 1, 1, 1, 1]
+    },
+    running: {
+      3: [1, 1, 0, 0, 0, 1, 0],
+      4: [1, 1, 0, 1, 0, 1, 0],
+      5: [1, 1, 1, 1, 0, 1, 0],
+      6: [1, 1, 1, 1, 0, 1, 1],
+      7: [1, 1, 1, 1, 1, 1, 1]
+    },
+    strength: {
+      3: [1, 0, 1, 0, 1, 0, 0],
+      4: [1, 1, 1, 0, 1, 0, 0],
+      5: [1, 1, 1, 0, 1, 1, 0],
+      6: [1, 1, 1, 1, 1, 1, 0],
+      7: [1, 1, 1, 1, 1, 1, 1]
+    },
+    balanced: {
+      3: [1, 1, 0, 1, 0, 0, 0],
+      4: [1, 1, 1, 1, 0, 0, 0],
+      5: [1, 1, 1, 1, 0, 1, 0],
+      6: [1, 1, 1, 1, 1, 1, 0],
+      7: [1, 1, 1, 1, 1, 1, 1]
+    }
+  };
+
+  const LIFT_ADAPT = {
+    "Back Squat": { beginner: { full_hyrox: "Leg Press", gym_no_hyrox: "Goblet Box Squat", minimal_home: "Sit-to-stand squat" }, intermediate: { full_hyrox: "Goblet Squat", gym_no_hyrox: "Goblet Squat", minimal_home: "Goblet or backpack squat" }, advanced: { gym_no_hyrox: "Back Squat or Goblet Squat", minimal_home: "Loaded backpack squat" } },
+    "Leg Press": { beginner: { minimal_home: "Chair squat" }, intermediate: { minimal_home: "Backpack squat" }, advanced: { minimal_home: "Loaded backpack squat" } },
+    "Leg Curl": { beginner: { minimal_home: "Slider / towel hamstring curl" }, intermediate: { minimal_home: "Slider hamstring curl" }, advanced: { minimal_home: "Single-leg slider curl" } },
+    "Hip Thrust": { beginner: { minimal_home: "Glute bridge" }, intermediate: { minimal_home: "Shoulder-elevated glute bridge" }, advanced: { minimal_home: "Loaded glute bridge" } },
+    "Military Press": { beginner: { full_hyrox: "Seated DB Press", gym_no_hyrox: "Seated DB Press", minimal_home: "Seated DB press or pike push-up" }, intermediate: { full_hyrox: "Standing DB Press", gym_no_hyrox: "Standing DB Press", minimal_home: "Standing DB Press" }, advanced: { gym_no_hyrox: "Military Press or DB Press", minimal_home: "DB Military Press" } },
+    "Lateral Raise": { beginner: { minimal_home: "Band lateral raise" }, intermediate: { minimal_home: "DB or band lateral raise" }, advanced: { minimal_home: "DB lateral raise" } },
+    "Overhead Triceps Extension": { beginner: { minimal_home: "Band triceps press-down" }, intermediate: { minimal_home: "DB overhead extension" }, advanced: { minimal_home: "DB overhead extension" } },
+    "Rope Pushdown": { beginner: { gym_no_hyrox: "Cable or band pushdown", minimal_home: "Band pushdown" }, intermediate: { minimal_home: "Band pushdown" }, advanced: { minimal_home: "Band pushdown" } },
+    "Bench Press": { beginner: { full_hyrox: "Chest Press Machine", gym_no_hyrox: "Chest Press Machine", minimal_home: "Kneeling or elevated push-up" }, intermediate: { full_hyrox: "DB Bench Press", gym_no_hyrox: "DB Bench Press", minimal_home: "Push-up or DB floor press" }, advanced: { gym_no_hyrox: "Barbell or DB Bench Press", minimal_home: "Deficit push-up or DB floor press" } },
+    "Incline DB Press": { beginner: { full_hyrox: "Incline chest press machine", gym_no_hyrox: "Incline DB press (light)", minimal_home: "Hands-elevated push-up" }, intermediate: { minimal_home: "DB floor press" }, advanced: { minimal_home: "Deficit push-up" } },
+    "Cable / DB Fly": { beginner: { minimal_home: "Band fly" }, intermediate: { minimal_home: "DB floor fly" }, advanced: { minimal_home: "DB fly" } },
+    "Lat Pulldown / Pull-Up": { beginner: { full_hyrox: "Lat Pulldown", gym_no_hyrox: "Lat Pulldown", minimal_home: "Band pulldown or towel door row" }, intermediate: { full_hyrox: "Lat Pulldown / Assisted Pull-Up", gym_no_hyrox: "Lat Pulldown / Assisted Pull-Up", minimal_home: "Band pulldown" }, advanced: { gym_no_hyrox: "Pull-Up or heavy pulldown", minimal_home: "Band-assisted pull-up or door row" } },
+    "Seated Row": { beginner: { full_hyrox: "Seated Machine Row", gym_no_hyrox: "Seated Machine Row", minimal_home: "Band row or backpack row" }, intermediate: { gym_no_hyrox: "Cable Row", minimal_home: "One-arm DB row" }, advanced: { minimal_home: "Heavy one-arm DB row" } },
+    "Single-Arm Row / Pulldown": { beginner: { minimal_home: "Band row" }, intermediate: { minimal_home: "One-arm DB row" }, advanced: { minimal_home: "Heavy one-arm DB row" } },
+    "Hammer Curl": { beginner: { minimal_home: "Band curl" }, intermediate: { minimal_home: "DB hammer curl" }, advanced: { minimal_home: "DB hammer curl" } },
+    "Cable Curl": { beginner: { gym_no_hyrox: "DB curl", minimal_home: "Band curl" }, intermediate: { minimal_home: "DB curl" }, advanced: { minimal_home: "DB curl" } },
+    "Deadlift": { beginner: { full_hyrox: "Cable Pull-Through", gym_no_hyrox: "Light DB Romanian Deadlift", minimal_home: "Hip hinge good morning" }, intermediate: { full_hyrox: "Romanian Deadlift", gym_no_hyrox: "DB Romanian Deadlift", minimal_home: "DB or backpack Romanian Deadlift" }, advanced: { gym_no_hyrox: "Deadlift", minimal_home: "DB Romanian Deadlift" } },
+    "Incline Bench Press": { beginner: { full_hyrox: "Incline machine press", gym_no_hyrox: "Incline DB press", minimal_home: "Hands-elevated push-up" }, intermediate: { minimal_home: "DB floor press" }, advanced: { minimal_home: "Deficit push-up" } },
+    "Chest-Supported / Wide Row": { beginner: { full_hyrox: "Seated Machine Row", gym_no_hyrox: "Chest-supported DB row", minimal_home: "Band row" }, intermediate: { minimal_home: "One-arm DB row" }, advanced: { minimal_home: "Heavy one-arm DB row" } },
+    "DB Shoulder Press": { beginner: { full_hyrox: "Seated DB Press", gym_no_hyrox: "Seated DB Press", minimal_home: "Seated DB press" }, intermediate: { minimal_home: "Standing DB Press" }, advanced: { minimal_home: "DB Military Press" } },
+    "Leg Extension": { beginner: { minimal_home: "Sit-to-stand squat" }, intermediate: { minimal_home: "Split squat to a chair" }, advanced: { minimal_home: "DB reverse lunge" } },
+    "DB Shrugs": { beginner: { minimal_home: "Backpack shrug" }, intermediate: { minimal_home: "DB shrug" }, advanced: { minimal_home: "DB shrug" } },
+    "EZ-Bar Curl": { beginner: { gym_no_hyrox: "DB curl", minimal_home: "Band curl" }, intermediate: { minimal_home: "DB curl" }, advanced: { minimal_home: "DB curl" } },
+    "Pushdown": { beginner: { gym_no_hyrox: "Band pushdown", minimal_home: "Band pushdown" }, intermediate: { minimal_home: "Band pushdown" }, advanced: { minimal_home: "Band pushdown" } },
+    "V-Ups": { beginner: { full_hyrox: "Dead Bug", gym_no_hyrox: "Dead Bug", minimal_home: "Dead Bug" } },
+    "Dumbbell Side Bend": { beginner: { full_hyrox: "Dead Bug", gym_no_hyrox: "Dead Bug", minimal_home: "Dead Bug" } }
+  };
+
+  const PRIORITY_COPY = {
+    hyrox: { title: "12-Week Hybrid Performance Plan", subtitle: COVER.subtitle, intro: COVER.intro },
+    running: { title: "12-Week Running-Priority Hybrid Plan", subtitle: "Same gym logic as the master. Running gets the extra vote; HYROX days become run-focused.", intro: "You still lift the master sessions. Extra room in the week goes to easy and long running, not extra max gym days." },
+    strength: { title: "12-Week Strength-Priority Hybrid Plan", subtitle: "Same gym sessions as the master. Running and stations scale around the lifts.", intro: "The three gym days stay intact whenever the week has room. Conditioning is support, not a second peak." },
+    balanced: { title: "12-Week Balanced Hybrid Plan", subtitle: "The master week, with days and intensity scaled to a mixed goal.", intro: "Lift, run and condition from the same template. Nothing is a random workout." }
+  };
+
+  function libApi() {
+    return root.EGLibrary || {};
+  }
+
+  function adaptLiftName(name, ctx) {
+    const level = ctx.level === "beginner" || ctx.strengthBase === "new" ? "beginner" : ctx.level === "advanced" && (ctx.strengthBase === "advanced" || ctx.strengthBase === "consistent") ? "advanced" : "intermediate";
+    const eq = ctx.equipmentProfile || "gym_no_hyrox";
+    const row = LIFT_ADAPT[name];
+    if (!row) return name;
+    const byLevel = row[level] || row.advanced || {};
+    return byLevel[eq] || byLevel.full_hyrox || name;
+  }
+
+  function adaptDose(rx, level) {
+    if (!rx || level === "advanced") return rx;
+    let out = String(rx);
+    if (/^Top 1 x/i.test(out)) {
+      if (level === "beginner") return "3 x 8-10 | 3 RIR | technique load | Rest 2 min";
+      const back = out.match(/Back-off\s+(\d+)\s+x\s+([^|]+)\s*\|\s*([^|]+)\s*\|\s*(.+)/i);
+      if (back) {
+        const rest = (back[4].match(/Rest\s+(.+)/i) || [])[1] || "2-3 min";
+        return `${back[1]} x ${back[2].trim()} | ${back[3].trim()} | ~ 70-75% 1RM | Rest ${rest.trim()}`;
+      }
+    }
+    if (level === "beginner") {
+      out = out.replace(/(\d+)\s*RIR/g, (_, n) => `${Math.min(4, Number(n) + 1)} RIR`);
+      out = out.replace(/~\s*(\d{2,3})(?:-\d{2,3})?%/g, (_, n) => `~ ${Math.max(50, Number(n) - 12)}%`);
+      out = out.replace(/^4 x /g, "3 x ");
+      out = out.replace(/1-2 x /g, "2 x ");
+      out = out.replace(/2 x 45-60 sec/g, "2 x 20-30 sec");
+      out = out.replace(/2 x 30-40 sec/g, "2 x 15-20 sec");
+      out = out.replace(/2 x 12-15/g, "2 x 8-10");
+    } else {
+      out = out.replace(/~\s*(8[8-9]|9\d)(?:-\d+)?%/g, "~ 80-82%");
+      out = out.replace(/1-2 RIR/g, "2-3 RIR");
+      out = out.replace(/\| 1 RIR/g, "| 2 RIR");
+    }
+    return out;
+  }
+
+  function adaptEst(range, level) {
+    if (level === "advanced" || !range) return range;
+    const cut = level === "beginner" ? 15 : 8;
+    return { min: Math.max(40, range.min - cut), max: Math.max(52, range.max - cut) };
+  }
+
+  function adaptHyroxLine(text, ctx) {
+    let out = String(text || "");
+    const Lib = libApi();
+    if (Lib.resolveHyroxStation && ctx.equipmentProfile && ctx.equipmentProfile !== "full_hyrox") {
+      const pairs = [
+        ["SkiErg", "ski"], ["RowErg", "row"], ["Sled Push", "sled_push"], ["Sled Pull", "sled_pull"],
+        ["Farmers Carry", "farmers"], ["Sandbag Lunges", "lunges"], ["Wall Balls", "wall_ball"],
+        ["Wall Ball", "wall_ball"], ["Burpee Broad Jumps", "bbj"], ["Burpee Broad Jump", "bbj"]
+      ];
+      pairs.forEach(([label, intent]) => {
+        const sub = Lib.resolveHyroxStation(intent, ctx);
+        if (sub && sub.name) out = out.split(label).join(sub.name);
+      });
+      out = out.replace(/\(Open Men:[^)]+\)/g, "(use a hard but controlled substitute load)");
+      out = out.replace(/,\s*damper\s+\d(?:-\d)?/gi, "");
+    }
+    if (ctx.level === "beginner") {
+      out = out.replace(/105–110%|105-110%/g, "75%");
+      out = out.replace(/100% Race Load/g, "70% Race Load");
+      out = out.replace(/90% Race Load/g, "70% Race Load");
+    }
+    return out;
+  }
+
+  function adaptRunCopy(text, ctx) {
+    let out = String(text || "");
+    const first5k = ctx.runningGoal === "first5k" || ctx.runningBase === "new";
+    const support = ctx.runningGoal === "supportOnly";
+    if (ctx.level === "beginner" || first5k || support) {
+      out = out.replace(/8 x 2 min in Zone 4/gi, "6 x 20-second controlled accelerations");
+      out = out.replace(/6 x 3 min in Zone 4/gi, "6 x 20-second controlled accelerations");
+      out = out.replace(/6 x 90 sec in Zone 4/gi, "5 x 20-second controlled accelerations");
+      out = out.replace(/5 x 2 min in Zone 4/gi, "5 x 20-second controlled accelerations");
+      out = out.replace(/3 x 8 min at your target half-marathon pace/gi, "3 x 3 min slightly quicker than easy");
+      out = out.replace(/14 km progressive[^.]*/i, first5k ? "30-40 min easy walk / run" : "8 km easy, last 10 min steady if fresh");
+      out = out.replace(/16 km progressive[^.]*/i, first5k ? "35-40 min easy walk / run" : "9 km easy, last 10 min steady if fresh");
+      out = out.replace(/18 km progressive[^.]*/i, first5k ? "40 min easy walk / run" : "10 km easy");
+      out = out.replace(/18-20 km progressive[^.]*/i, first5k ? "40 min easy walk / run" : "10-12 km easy");
+      out = out.replace(/20 km progressive[^.]*/i, first5k ? "40 min easy walk / run" : "11 km easy");
+      out = out.replace(/12-14 km progressive[^.]*/i, first5k ? "30 min easy walk / run" : "8 km easy");
+      out = out.replace(/50 min Zone 2/gi, first5k ? "25 min easy walk / run" : "35 min Zone 2");
+      out = out.replace(/55 min Zone 2/gi, first5k ? "28 min easy walk / run" : "40 min Zone 2");
+      out = out.replace(/60 min Zone 2/gi, first5k ? "30 min easy walk / run" : "45 min Zone 2");
+      out = out.replace(/50-55 min Zone 2/gi, first5k ? "25 min easy walk / run" : "35 min Zone 2");
+      out = out.replace(/45 min Zone 2/gi, first5k ? "22 min easy walk / run" : "30 min Zone 2");
+      out = out.replace(/35-40 min Zone 2/gi, first5k ? "20 min easy walk / run" : "30 min Zone 2");
+    }
+    return out;
+  }
+
+  function adaptExercise(ex, ctx) {
+    const next = { ...ex };
+    next.name = adaptRunCopy(adaptHyroxLine(adaptLiftName(ex.name, ctx), ctx), ctx);
+    next.prescription = adaptDose(adaptHyroxLine(ex.prescription || "", ctx), ctx.level);
+    if (ex.notes) next.notes = adaptHyroxLine(ex.notes, ctx);
+    return next;
+  }
+
+  function adaptSession(s, ctx) {
+    if (s.type === "recovery") return s;
+    const session = {
+      ...s,
+      durationMin: adaptEst(s.durationMin, ctx.level),
+      objective: adaptRunCopy(adaptHyroxLine(s.objective || "", ctx), ctx),
+      coachNote: adaptHyroxLine(s.coachNote || "", ctx),
+      callouts: (s.callouts || []).map((c) => ({ ...c, text: adaptRunCopy(adaptHyroxLine(c.text, ctx), ctx) })),
+      main: (s.main || []).map((ex) => adaptExercise(ex, ctx))
+    };
+    if (session.durationMin) {
+      session.duration = `${session.durationMin.min}–${session.durationMin.max} min`;
+    }
+    if (!session.main.length && session.objective) {
+      session.main = [{ kind: "step", name: session.objective.replace(/^Session:\s*/i, "") }];
+    }
+    const first5k = ctx.runningGoal === "first5k" || ctx.runningBase === "new";
+    if (session.type === "run" && (first5k || ctx.level === "beginner")) {
+      const walk = { kind: "step", name: "Walk / run", prescription: "Alternate easy walking and easy jogging. Stay able to talk." };
+      if (!session.main.some((ex) => /walk\s*\/\s*run|^walk\b/i.test(ex.name || ""))) session.main = [walk].concat(session.main);
+    }
+    if (ctx.priority === "running" && session.type === "hyrox") {
+      session.type = "run";
+      session.subtype = session.subtype === "hyroxStations" ? "easyRun" : "qualityRun";
+      session.title = session.subtype === "easyRun" ? "Easy aerobic" : "Quality / compromised run";
+      session.callouts = (session.callouts || []).slice(0, 1).concat([{ label: "Running focus", text: "Keep the runs. Treat any station as a short, easy transition — not a race rehearsal." }]).slice(0, 2);
+    }
+    if (ctx.level === "beginner" && session.type === "hyrox" && session.subtype === "hyroxStations" && session.main.length > 6) {
+      session.main = session.main.slice(0, 6);
+      session.title = session.title === "Full Simulation" ? "Short HYROX rehearsal" : session.title;
+    }
+    return session;
+  }
+
+  function structureFrom(sessions) {
+    return sessions.map((s) => {
+      if (s.type === "recovery") return [s.dayName, "Rest"];
+      if (s.type === "strength") return [s.dayName, `Gym ${s.gymIndex} — ${s.title}`];
+      if (s.type === "hyrox") return [s.dayName, `${s.title} — HYROX`];
+      return [s.dayName, `${s.title} — Run`];
+    });
+  }
+
+  function rawMasterWeek(weekNumber) {
     const w = Number(weekNumber) || 1;
     const i = w - 1;
     const meta = WEEK_META[i];
@@ -528,14 +758,29 @@
       runSession(6, cond.sat, w),
       hyroxSession(7, cond.sun, "hyroxStations", w)
     ];
+    return { w, meta, sessions };
+  }
+
+  function keepMask(ctx) {
+    const days = Number(ctx.daysPerWeek) || 7;
+    const table = KEEP[ctx.priority] || KEEP.hyrox;
+    return table[days] || table[7];
+  }
+
+  function weekForProfile(ctx = {}) {
+    const { w, meta, sessions: raw } = rawMasterWeek(ctx.week || 1);
+    const keep = keepMask(ctx);
+    const sessions = raw.map((s, idx) => (keep[idx] ? adaptSession(s, ctx) : recoverySession(idx + 1)));
+    const copy = PRIORITY_COPY[ctx.priority] || PRIORITY_COPY.hyrox;
+    const days = Number(ctx.daysPerWeek) || 7;
     return {
-      id: "hyrox-7d",
+      id: `${ctx.priority || "hyrox"}-${days}d`,
       masterId: "Advanced_7_Days_HYROX_Focus_SUPER_FINAL",
       isMaster: true,
-      priority: "hyrox",
-      daysPerWeek: 7,
-      level: "advanced",
-      runningGoal: "halfMarathon",
+      priority: ctx.priority || "hyrox",
+      daysPerWeek: days,
+      level: ctx.level || "advanced",
+      runningGoal: ctx.runningGoal || "halfMarathon",
       runningBase: ctx.runningBase || "endurance",
       strengthBase: ctx.strengthBase || "advanced",
       equipmentProfile: ctx.equipmentProfile || "full_hyrox",
@@ -544,32 +789,44 @@
       blockLabel: meta.blockLabel,
       weekLabel: meta.weekLabel,
       weekNote: meta.weekNote || "",
-      documentTitle: COVER.documentTitle,
-      title: COVER.documentTitle,
+      documentTitle: copy.title,
+      title: copy.title,
       subtitle: meta.subtitle,
-      coverSubtitle: COVER.subtitle,
-      intro: COVER.intro,
+      coverSubtitle: copy.subtitle,
+      intro: copy.intro,
       weeklyGuidance: [COVER.rule],
-      weeklyStructure: COVER.structure,
+      weeklyStructure: structureFrom(sessions),
       sessions,
-      recoveryDays: [],
+      recoveryDays: sessions.filter((s) => s.type === "recovery").map((s) => s.day),
       explanations: [],
       disclaimer: "This plan is general hybrid training for healthy adults. It is not medical, physiotherapy or individualized clinical advice.",
       version: 2,
-      updatedAt: "2026-09-09"
+      updatedAt: "2026-09-10"
     };
   }
 
+  function matches() {
+    return true;
+  }
+
+  function weekAsPlan(weekNumber, ctx = {}) {
+    return weekForProfile({ ...ctx, week: weekNumber });
+  }
+
   function allWeeks(ctx = {}) {
-    return WEEK_META.map((m) => weekAsPlan(m.week, ctx));
+    return WEEK_META.map((m) => weekForProfile({ ...ctx, week: m.week }));
+  }
+
+  function allWeeksForProfile(ctx = {}) {
+    return allWeeks(ctx);
   }
 
   function document(ctx = {}) {
     const weeks = allWeeks(ctx);
-    return { ...weeks[0], weeks, title: COVER.documentTitle, subtitle: COVER.subtitle };
+    return { ...weeks[0], weeks, title: weeks[0].title, subtitle: weeks[0].coverSubtitle };
   }
 
-  const api = { COVER, WEEK_META, matches, weekAsPlan, allWeeks, document };
+  const api = { COVER, WEEK_META, matches, weekAsPlan, weekForProfile, allWeeks, allWeeksForProfile, document };
   root.EGSuperFinal = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

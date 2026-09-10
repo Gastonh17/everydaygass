@@ -739,7 +739,7 @@
 
   function buildWeek(raw) {
     const ctx = normalizeProfile(raw);
-    if (SuperFinal?.matches(ctx)) return SuperFinal.weekAsPlan(ctx.week, ctx);
+    if (SuperFinal?.weekForProfile) return SuperFinal.weekForProfile(ctx);
     const keys = Layouts.getLayout(ctx.priority, ctx.daysPerWeek);
     if (!keys) return null;
     const sessions = keys.map((key, i) => {
@@ -806,7 +806,7 @@
 
   function build12WeekPlan(profile, premiumProfile = {}) {
     const ctx = normalizeProfile({ ...profile, ...premiumProfile });
-    if (SuperFinal?.matches(ctx)) return SuperFinal.allWeeks(ctx);
+    if (SuperFinal?.allWeeks) return SuperFinal.allWeeks(ctx);
     return Array.from({ length: 12 }, (_, i) => {
       const week = i + 1;
       return buildWeek({ ...profile, ...premiumProfile, week, block: getBlock(week) });
