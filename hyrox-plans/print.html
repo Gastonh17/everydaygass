@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HYROX plan print</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <script src="../js/getPlanId.js"></script>
+  <script src="../js/data/weeklyLayouts.js"></script>
+  <script src="../js/data/hyroxRaceLoads.js"></script>
+  <script src="../js/data/library.js"></script>
+  <script src="../js/data/superFinalHyrox7.js"></script>
+  <script src="../js/engine/engine.js"></script>
+  <script src="../js/data/plans.js"></script>
+  <script src="../js/zones.js"></script>
+  <script src="../js/pdf.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const days = Number(params.get("days") || 7);
+    const profile = {
+      priority: "hyrox",
+      daysPerWeek: days,
+      level: "advanced",
+      runningBase: "endurance",
+      runningGoal: "halfMarathon",
+      strengthBase: "advanced",
+      equipmentProfile: "full_hyrox"
+    };
+    const doc = EGEngine.buildPlanDocument(profile);
+    const html = EGPdf.build(doc, doc);
+    document.open();
+    document.write(html);
+    document.close();
+  </script>
+</body>
+</html>

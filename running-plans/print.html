@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Marina training plan GYM + Half Marathon Roma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <script src="../js/data/halfMarathon36d.js"></script>
+  <script src="../js/pdf.js"></script>
+  <script>
+    const doc = EGHalf36.document();
+    const html = EGPdf.build(doc, doc);
+    document.open();
+    document.write(html);
+    document.close();
+  </script>
+</body>
+</html>

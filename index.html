@@ -4,163 +4,353 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#FFFFFF" />
-  <meta name="description" content="EverydayGass — hybrid training to become stronger, faster and more athletic. Love the beginner. 1% better every day." />
-  <title>EverydayGass — Become the athlete you didn’t think you could be</title>
+  <meta name="description" content="EverydayGass — 1% better every day. A plan built around you, intro calls, FIT cookbook, and 1:1 coaching in Geneva. Prices in CHF and EUR." />
+  <title>EverydayGass — Choose your path</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/sales.css" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
-<body>
-  <div data-header></div>
+<body class="sales">
+  <div class="sales-app">
+    <header class="sales-top">
+      <a class="logo" href="index.html">EverydayGass</a>
+      <a class="mini" href="#packs">Choose</a>
+    </header>
 
-  <section class="masthead">
-    <div class="wrap">
-      <p class="eyebrow">EverydayGass · Hybrid Training</p>
-      <h1>Become the athlete you didn’t think you could be.</h1>
-      <p class="lead">Get your personalized 1-week Hybrid Training plan in about a minute. No account. No app.</p>
-      <a class="btn btn--primary" href="free-week.html">Build my free Hybrid Week</a>
-    </div>
-  </section>
+    <section class="sales-hero">
+      <p class="eyebrow">EverydayGass · 1% better every day</p>
+      <h1>Stop training at random.</h1>
+      <p class="lead">A personalized plan & support built around your goals, with the level of support you actually need.</p>
+      <p class="signature">I started from zero and I want to help you start your journey.</p>
+      <a class="btn btn--primary" href="#packs">See the packages</a>
+      <p class="muted" style="margin-top:12px;font-size:.82rem">Intro call + plan-walkthrough call included</p>
+    </section>
 
-  <figure class="bleed">
-    <img class="photo--high" src="images/hyrox-verona-1.jpg" alt="Gaston lunging with a HYROX sandbag" />
-    <figcaption class="photo-credit">HYROX Italy Verona, February 2026</figcaption>
-  </figure>
+    <figure class="sales-photo">
+      <img class="fit-body fit-body--lunge" src="images/hyrox-verona-1.jpg" alt="HYROX sandbag lunge in Verona" />
+      <figcaption>HYROX Italy Verona, 2026</figcaption>
+    </figure>
 
-  <section class="section" id="philosophy">
-    <div class="wrap">
-      <p class="eyebrow">Philosophy</p>
-      <h2>Love the beginner. 1% better every day.</h2>
-      <p class="lead">We don’t ask you to train like an elite. We start where you are — first 5K, getting stronger, coming back after a break — and we build an athletic identity you can repeat.</p>
-    </div>
-  </section>
+    <section class="sales-section" id="packs">
+      <p class="eyebrow">Choose your path</p>
+      <h2>The right level of support for you</h2>
+      <p class="lead">The more weeks you take, the more you save. Prices in CHF and EUR.</p>
+      <p class="cycle-label">Choose duration</p>
 
-  <section class="section section--sand" id="method">
-    <div class="wrap">
-      <p class="eyebrow">The method</p>
-      <h2>Run. Lift. Condition. Recover.</h2>
-      <p class="lead">5K, 10K and HYROX are goals. Hybrid is the identity. One method, different entry points.</p>
-      <div class="pillars">
-        <article class="pillar">
-          <div class="pillar__icon">01</div>
-          <h3>Run</h3>
-          <p>Easy aerobic work first. Speed comes later.</p>
-        </article>
-        <article class="pillar">
-          <div class="pillar__icon">02</div>
-          <h3>Lift</h3>
-          <p>Squat, hinge, push, pull. Strength that lasts.</p>
-        </article>
-        <article class="pillar">
-          <div class="pillar__icon">03</div>
-          <h3>Condition</h3>
-          <p>Mixed sessions when the base is there.</p>
-        </article>
-        <article class="pillar">
-          <div class="pillar__icon">04</div>
-          <h3>Recover</h3>
-          <p>The week only counts if you can repeat it.</p>
-        </article>
+      <div class="cycle" role="tablist">
+        <button type="button" class="is-on" data-cycle="8">8 weeks</button>
+        <button type="button" data-cycle="16">16 weeks<small>−10%</small></button>
+        <button type="button" data-cycle="24">24 weeks<small>−15%</small></button>
       </div>
-    </div>
-  </section>
 
-  <section class="section" id="goals">
-    <div class="wrap">
-      <p class="eyebrow">Start here</p>
-      <h2>What do you want to improve most right now?</h2>
-      <p class="lead">Four priorities. Five frequencies. Twenty weeks. Hybrid stays the identity.</p>
-      <div class="goal-grid" data-priorities></div>
-    </div>
-  </section>
+      <article class="pack">
+        <p class="eyebrow">EverydayFit</p>
+        <h3>Your tailored plan</h3>
+        <p class="tagline">Train with a method, not at random.</p>
+        <p class="pack-duration"><span data-weeks-label>8 weeks</span></p>
+        <div class="price-dual">
+          <div class="main" data-price="core" data-field="chf">CHF 95</div>
+          <div class="alt" data-price="core" data-field="eur">€99</div>
+          <div class="week" data-price="core" data-field="week">CHF 11.88 / week · €12.38 / week</div>
+        </div>
+        <ul>
+          <li>Intro call to understand your goals</li>
+          <li>Personalised training plan</li>
+          <li>Walkthrough call to explain the plan and coaching cues</li>
+          <li>Plan update every 8 weeks</li>
+        </ul>
+        <a class="btn btn--ghost btn--full" href="#" data-buy="EverydayFit">Choose EverydayFit</a>
+        <p class="lock">Secure payment</p>
+      </article>
 
-  <section class="section section--sand" id="proof">
-    <div class="wrap">
-      <p class="eyebrow">Proof</p>
-      <h2>Real progress, not perfect beginnings.</h2>
-      <p class="lead">I live the process I teach — race days included.</p>
-      <div class="race-list">
-        <figure class="race-pair">
-          <div class="race-pair__photos">
-            <img class="photo--high" src="images/hyrox-verona-1.jpg" alt="Gaston lunging with a HYROX sandbag in Verona" loading="lazy" />
-            <img src="images/hyrox-verona-2.jpg" alt="Gaston and training partner at the HYROX Verona finish" loading="lazy" />
-          </div>
-          <figcaption class="photo-credit">HYROX Italy Verona, February 2026</figcaption>
-        </figure>
-        <figure class="race-pair">
-          <div class="race-pair__photos">
-            <img src="images/triathlon-cervia-1.jpg" alt="Gaston running the Ironman course in Cervia" loading="lazy" />
-            <img src="images/triathlon-cervia-2.jpg" alt="Gaston in triathlon transition with his bike in Cervia" loading="lazy" />
-          </div>
-          <figcaption class="photo-credit">Triathlon Italy Cervia, September 2025</figcaption>
-        </figure>
-        <figure class="race-pair">
-          <div class="race-pair__photos">
-            <img src="images/half-marathon-roma-1.jpg" alt="Start line of the Wizz Air Rome Half Marathon" loading="lazy" />
-            <img class="photo--high" src="images/half-marathon-roma-2.jpg" alt="Gaston with his Rome Half Marathon finisher medal" loading="lazy" />
-          </div>
-          <figcaption class="photo-credit">Half Marathon Roma, October 2024</figcaption>
-        </figure>
-      </div>
-      <div class="media-card">
-        <div class="media-card__body">
-          <p class="muted">Gaston · founder</p>
-          <p class="quote">“I live the process I teach. The goal is not one perfect week. It’s a system you can repeat when work is messy.”</p>
+      <article class="pack is-hot">
+        <span class="badge">Most chosen</span>
+        <p class="eyebrow">EverydayFit Plus</p>
+        <h3>The plan, plus my support</h3>
+        <p class="tagline">Energy, discipline, motivation — and someone who keeps you honest.</p>
+        <p class="pack-duration"><span data-weeks-label>8 weeks</span></p>
+        <div class="price-dual">
+          <div class="main" data-price="plus" data-field="chf">CHF 235</div>
+          <div class="alt" data-price="plus" data-field="eur">€249</div>
+          <div class="week" data-price="plus" data-field="week">CHF 29.38 / week · €31.13 / week</div>
+        </div>
+        <ul>
+          <li>Intro call to understand your goals</li>
+          <li>Personalised training plan</li>
+          <li>Walkthrough call to explain the plan and coaching cues</li>
+          <li>Plan update every 8 weeks</li>
+          <li>Dedicated WhatsApp chat with me for the full duration, with time slots</li>
+          <li>FIT Cookbook I follow — 100+ easy recipes with video-guide</li>
+          <li>Guide to build solid discipline & habits</li>
+        </ul>
+        <a class="btn btn--primary btn--full" href="#" data-buy="EverydayFit Plus">Choose EverydayFit Plus</a>
+        <p class="lock">Secure payment</p>
+      </article>
+
+      <article class="pack-one" id="oneone">
+        <p class="eyebrow">EverydayGass Method</p>
+        <h3>Based in Geneva and want total results?</h3>
+        <p>The complete path with me. We train together 1–2 times a week. I follow you 1:1 and I make sure you hit your goals in the planned timeframe — if you don’t, you get a reimbursement.</p>
+        <div class="price-dual" style="margin:14px 0 6px">
+          <div class="main">On request</div>
+          <div class="week" style="color:#c9c4bb">CHF & EUR · Geneva</div>
+        </div>
+        <ul>
+          <li>We train together</li>
+          <li>I follow you 1:1 for the full path</li>
+          <li>I make sure you reach your goals in the planned timeframe — if you don’t, you get a reimbursement</li>
+          <li>A plan built around you, updated as we go</li>
+          <li>Intro call + plan walkthrough</li>
+          <li>Dedicated WhatsApp with me, with no time slot</li>
+          <li>FIT Cookbook I follow — 100+ easy recipes with video-guide</li>
+          <li>Guide to build solid discipline & habits</li>
+        </ul>
+        <a class="btn btn--primary" href="#call">Request more info</a>
+      </article>
+
+      <p class="note">After purchase you get email confirmation straight away. We book the intro call, then I build the plan. A second call walks you through it — loads, zones, and what to do when the week blows up.</p>
+    </section>
+
+    <section class="sales-section sales-section--sand" id="chi">
+      <p class="eyebrow">Just someone who started from zero, like you, and found his method.</p>
+      <h2>Energy, discipline, motivation. Knowledge I tested on myself.</h2>
+      <figure class="story-photo">
+        <img src="images/webpic-hyrox-doubles.jpg" alt="HYROX Doubles finish in Verona, 1:07:34" />
+        <figcaption>HYROX Doubles, Verona, 2026</figcaption>
+      </figure>
+      <div class="person">
+        <div>
+          <p class="eyebrow">Gaston</p>
+          <h3>EverydayGass</h3>
+          <p>I started from zero. Not as an athlete, not as someone who always lived in a gym — as someone who had to build discipline, energy and a repeatable method. Today I run, lift, race HYROX and triathlon — and I want to help you start your journey. 1% better every day.</p>
+          <p class="muted" style="margin-top:10px">Love the beginner in you, everyday.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section" id="path">
-    <div class="wrap">
-      <p class="eyebrow">How it works</p>
-      <h2>Start free. Follow a path. Add support when you need it.</h2>
-      <div class="steps">
-        <article class="step">
-          <div class="step__n">01</div>
+    <section class="sales-section" id="metodo">
+      <p class="eyebrow">How we work</p>
+      <h2>Two calls. One plan. Then the real work.</h2>
+      <div class="how">
+        <article>
+          <div class="n">01</div>
           <div>
-            <h3>Free week</h3>
-            <p>Seven questions. One of 20 plans. Train tomorrow, in the browser.</p>
+            <h3>Intro call</h3>
+            <p>We start with you: work, schedule, level, constraints. No stock template. I need to understand who you actually are.</p>
           </div>
         </article>
-        <article class="step">
-          <div class="step__n">02</div>
+        <article>
+          <div class="n">02</div>
           <div>
-            <h3>12-week plan · €129</h3>
-            <p>Personalized progression. App access with guidance and a video for every exercise.</p>
+            <h3>A plan built around you</h3>
+            <p>I build every week around you: running, strength, hybrid or HYROX. Cut to your real life, not an ideal one.</p>
           </div>
         </article>
-        <article class="step">
-          <div class="step__n">03</div>
+        <article>
+          <div class="n">03</div>
           <div>
-            <h3>12-week Premium · €249</h3>
-            <p>Same plan, plus my guidance, chat, and food recipes.</p>
+            <h3>Plan walkthrough</h3>
+            <p>I explain the week, the loads, the zones, the cues. You leave knowing what to do on Monday — not with a PDF to decode.</p>
+          </div>
+        </article>
+        <article>
+          <div class="n">04</div>
+          <div>
+            <h3>Support</h3>
+            <p>Plus and EverydayGass Method include a dedicated WhatsApp. When life gets messy, we adjust — we don’t quit.</p>
           </div>
         </article>
       </div>
-      <div style="margin-top:32px">
-        <a class="btn btn--primary" href="free-week.html">Build my free Hybrid Week</a>
+    </section>
+
+    <section class="sales-section sales-section--sand">
+      <p class="eyebrow">FIT Cookbook I follow</p>
+      <div class="cookbook">
+        <p class="eyebrow">100+ easy recipes with video-guide · included in Plus and EverydayGass Method</p>
+        <h3>Eat in a way that supports the plan.</h3>
+        <p>Not a crash diet. Easy recipes with a video-guide you can actually cook on a busy week — watch, cook, eat. Portions, shopping, meals that sit next to your training instead of fighting it.</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section section--ink">
-    <div class="wrap center">
-      <p class="eyebrow">Start where you are</p>
-      <h2>Tell me your goal. I’ll help you structure the first week.</h2>
-      <p class="muted" style="margin: 0 auto 24px">Free. Visible on your phone. Downloadable as PDF.</p>
-      <a class="btn btn--primary" href="free-week.html">Build my free Hybrid Week</a>
-    </div>
-  </section>
+    <section class="sales-section" id="prova">
+      <p class="eyebrow">Lived proof</p>
+      <h2>I ran this method on myself first.</h2>
+      <p class="lead">I live this first. Race days included. The goal is not one perfect week. It’s a system you can keep when work is a mess.</p>
 
-  <div data-footer></div>
-  <script src="js/getPlanId.js"></script>
-  <script src="js/quiz/questions.js"></script>
-  <script src="js/quiz/migrateState.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/app.js"></script>
-  <script>EG.initHome()</script>
+      <div class="transform-block">
+        <h2>My transformation</h2>
+        <p class="transform-who">Gaston, 29 years</p>
+        <article class="proof-card proof-card--transform">
+          <img src="images/transformation-1.png" alt="Before and after side-profile transformation" />
+        </article>
+        <article class="proof-card proof-card--transform">
+          <img src="images/transformation-2.png" alt="Before and after transformation, from the water to the gym" />
+        </article>
+        <article class="proof-card proof-card--transform">
+          <img src="images/transformation-3.png" alt="Before and after transformation, from the start to HYROX Verona" />
+        </article>
+      </div>
+
+      <div class="achievements-block">
+        <h2>My achievements as of today</h2>
+        <p class="lead">I’m still raising the bar. Full HYROX and a 30k run are already booked. I want to continue this journey with you.</p>
+        <article class="proof-card">
+          <img src="images/webpic-hyrox.png" alt="HYROX sandbag lunge in Verona" />
+          <p class="who">HYROX Italy Verona, February 2026</p>
+          <blockquote>“I live the process I teach. 1% better every day.”</blockquote>
+        </article>
+        <article class="proof-card">
+          <img src="images/webpic-half-marathon.jpg" alt="Rome Half Marathon finish with medal" />
+          <p class="who">Half Marathon Roma, October 2024</p>
+          <blockquote>I started from zero. I want to help you start too.</blockquote>
+        </article>
+        <article class="proof-card">
+          <img src="images/webpic-triathlon.jpg" alt="Gaston running the triathlon course in Cervia" />
+          <p class="who">Triathlon Italy Cervia, September 2025</p>
+          <blockquote>Run. Lift. Condition. Recover. Hybrid is the identity.</blockquote>
+        </article>
+      </div>
+    </section>
+
+    <section class="sales-section sales-section--sand">
+      <p class="eyebrow">Is this the right path?</p>
+      <h2>It’s for you if you want a system. Not a spark.</h2>
+      <div class="split">
+        <article>
+          <h3>It’s for you if…</h3>
+          <ul>
+            <li>You’re tired of starting and quitting after two weeks</li>
+            <li>You have a full job and can’t find a consistent routine</li>
+            <li>You’ve already tried on your own and don’t see results</li>
+            <li>You think you don’t have time or discipline — and you want to stop believing that</li>
+            <li>You want energy, a method, and someone who started from zero like you</li>
+          </ul>
+        </article>
+        <article>
+          <h3>It’s not for you if…</h3>
+          <ul>
+            <li>You want a crash diet to lose 10 kg in a month</li>
+            <li>You’re not willing to make some sacrifice</li>
+            <li>You want someone to think for you without you showing up</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="sales-section" id="faq">
+      <p class="eyebrow">Common questions</p>
+      <h2>The doubts I hear most</h2>
+      <div class="sales-faq faq" data-faq>
+        <div class="item">
+          <button type="button">What happens after I start?</button>
+          <p class="ans">You get email confirmation and we book the intro call. From there I build the plan. Then we do the walkthrough call: it is not a PDF in a sealed box.</p>
+        </div>
+        <div class="item">
+          <button type="button">When do the 8 weeks actually start?</button>
+          <p class="ans">From the day you receive the programme, not from the day you pay. The call and the time I need to build the plan are not taken off your block. You get every week you paid for.</p>
+        </div>
+        <div class="item">
+          <button type="button">What’s the difference between EverydayFit and Plus?</button>
+          <p class="ans">Both include the plan I write for you, the intro call and the walkthrough call, with an update every 8 weeks. Plus adds dedicated WhatsApp, the FIT Cookbook I follow (100+ easy recipes with video-guide) and the discipline & habits guide. With EverydayFit you train on your own after the two calls. With Plus I’m in your pocket.</p>
+        </div>
+        <div class="item">
+          <button type="button">What is EverydayGass Method?</button>
+          <p class="ans">If you’re based in Geneva and want total results: we train together 1–2 times a week. I follow you 1:1 and I make sure you hit your goals in the planned timeframe — if you don’t, you get a reimbursement. Price is on request. Ask for more info and I’ll email you to book a call.</p>
+        </div>
+        <div class="item">
+          <button type="button">What happens at the end of the programme?</button>
+          <p class="ans">Nothing is charged automatically. If you want to keep my support, you can renew for another cycle at a better price. If you’d rather stop, you simply stop — the programme you already paid for stays yours until it ends.</p>
+        </div>
+        <div class="item">
+          <button type="button">Can I switch to Plus or EverydayGass Method?</button>
+          <p class="ans">Yes. Write to me and we apply the change from the next cycle. If you feel you need EverydayGass Method in Geneva, request more info below.</p>
+        </div>
+        <div class="item">
+          <button type="button">Who writes my plan?</button>
+          <p class="ans">I do. Every plan is written by me, for you — from the intro call: your goals, your level, your equipment, your constraints. Personalised, not a template.</p>
+        </div>
+        <div class="item">
+          <button type="button">I have back pain / old injuries</button>
+          <p class="ans">This is not rehab or medical care. We talk about it on the call and I build your plan around those constraints. For clinical conditions, see a qualified specialist.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sales-section sales-section--ink" id="call">
+      <p class="eyebrow">EverydayGass Method</p>
+      <h2>Based in Geneva and want total results? Request more info.</h2>
+      <p class="muted">Fill this in and I’ll email you to book a call. We’ll see together if training with me 1–2 times a week is the right path.</p>
+
+      <form class="sales-form" data-oneone>
+        <div class="fields">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="goal">What’s your main goal?</label>
+            <select id="goal" name="goal" required>
+              <option value="">Select a goal</option>
+              <option>Lose weight</option>
+              <option>Build muscle</option>
+              <option>Improve general fitness</option>
+              <option>HYROX / hybrid</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="experience">Have you followed a plan before?</label>
+            <select id="experience" name="experience" required>
+              <option value="">Select an option</option>
+              <option>No, never</option>
+              <option>Yes, but I stopped</option>
+              <option>Yes, I still follow one but I’m not seeing results</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="days">How many days a week can you train?</label>
+            <select id="days" name="days" required>
+              <option value="">Select an option</option>
+              <option>1–2 days</option>
+              <option>3–4 days</option>
+              <option>5 or more days</option>
+            </select>
+          </div>
+          <button class="btn btn--primary" type="submit">Request more info</button>
+        </div>
+        <div class="form-ok">
+          <p class="eyebrow">Done</p>
+          <h2 style="font-size:1.6rem">Open your mail app and send.</h2>
+          <p class="muted">I’ll email you back to book the call. It lasts about 30 minutes.</p>
+        </div>
+      </form>
+    </section>
+
+    <footer class="sales-foot">
+      <a class="logo" href="index.html">EverydayGass</a>
+      <p>1% better every day. Sports and lifestyle coaching — not medical, nutrition or physiotherapy care.</p>
+      <nav>
+        <a href="#packs">Packages</a>
+        <a href="#oneone">EverydayGass Method</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="cookie.html">Cookies</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+      <p>© 2026 EverydayGass</p>
+    </footer>
+  </div>
+
+  <div class="sales-sticky">
+    <a class="btn btn--primary" href="#packs">Choose your path</a>
+  </div>
+
+  <script src="js/sales-site.js"></script>
 </body>
 </html>

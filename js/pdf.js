@@ -18,7 +18,7 @@ window.EGPdf = (() => {
     intermediate: "Intermediate",
     advanced: "Advanced"
   };
-  const CORE_RE = /plank|v-up|dead bug|side bend|pallof|crunch|knee raise/i;
+  const CORE_RE = /plank|v-up|dead bug|side bend|pallof|crunch|knee raise|pull-up/i;
   const C = {
     ink: "#1F1A14",
     charcoal: "#4A4238",
@@ -136,7 +136,8 @@ window.EGPdf = (() => {
       </div>
       <div class="card__body">
         <div class="ex-list">${items.map(gymEx).join("")}</div>
-        ${core.length ? `<div class="core"><b>Core finisher</b>${core.map((ex, i) => `${i + 1}) ${esc(ex.name)} ${esc(ex.prescription || "")}`).join("  ")}</div>` : ""}
+        ${core.length ? `<div class="core"><b>${esc(s.finisherLabel || "Core finisher")}</b>${core.map((ex, i) => `${i + 1}) ${esc(ex.name)} ${esc(ex.prescription || "")}`).join("  ")}</div>` : ""}
+        ${callout("Focus", s.coachNote, "focus")}
       </div>
     </article>`;
   }
@@ -192,13 +193,13 @@ window.EGPdf = (() => {
           </div>
           <div class="week-head__side">
             <span class="pill">${esc(plan.blockLabel || "BUILD")}</span>
-            ${weekDots(plan.week || 1)}
+            ${weekDots(plan.week || 1, plan.weekTotal || 12)}
           </div>
         </header>
         <i class="week-rule"></i>
         ${plan.weekNote ? callout("This week", plan.weekNote) : ""}
         ${gym.length ? `<p class="sec-k">Strength / Gym</p><div class="grid ${gymGrid}">${gym.map((s, i) => gymCard(s, i, gym.length)).join("")}</div>` : ""}
-        ${cond.length ? `<p class="sec-k">Running + HYROX</p><div class="grid ${condGrid}">${cond.map(condCard).join("")}</div>` : ""}
+        ${cond.length ? `<p class="sec-k">${esc(plan.condHeading || (plan.sessions.some((s) => s.type === "hyrox") ? "Running + HYROX" : "Running"))}</p><div class="grid ${condGrid}">${cond.map(condCard).join("")}</div>` : ""}
       </div>
       <footer class="page__foot">
         <span>${metaLine(plan, plan)}</span>
@@ -219,12 +220,51 @@ window.EGPdf = (() => {
       </li>`).join("");
   }
 
+  function strategyPage(plan, state) {
+    const s = plan.strategy;
+    if (!s) return "";
+    const rules = (s.rules || []).map((t) => `<li>${esc(t)}</li>`).join("");
+    const split = (s.split || []).map((row) => `
+      <tr>
+        <th>${esc(row.station)}</th>
+        <td>${esc(row.how)}</td>
+        <td>${esc(row.her)}</td>
+      </tr>`).join("");
+    return `<section class="page page--strategy">
+      <div class="page__bar"></div>
+      <div class="page__in">
+        <p class="kicker">${esc(s.kicker || "HYROX Doubles Mixed")}</p>
+        <i class="rule-line"></i>
+        <h1 class="cover-title">${esc(s.title || "Strategia di gara")}</h1>
+        <p class="cover-lead">${esc(s.lead || "")}</p>
+        <div class="chips">${(s.chips || ["Doubles Mixed", "Men Open loads", "Your split"]).map(chip).join("")}</div>
+        <article class="card">
+          <h2>${esc(s.rulesTitle || "Doubles rules")}</h2>
+          <ol class="rule-list">${rules}</ol>
+        </article>
+        <article class="card card--structure" style="margin-top:2.4mm">
+          <h2>${esc(s.splitTitle || "How you split")}</h2>
+          <table class="split-table">
+            <thead><tr>${(s.splitHeaders || ["Station", "Race split", "Your pieces"]).map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+            <tbody>${split}</tbody>
+          </table>
+        </article>
+        ${callout(s.trainLabel || "When you train alone", s.trainNote || "")}
+        ${s.cueNote ? callout(s.cueLabel || "Focus", s.cueNote, "focus") : ""}
+      </div>
+      <footer class="page__foot">
+        <span>${esc(s.footer || "Strategia di gara")}</span>
+        <span class="pg"></span>
+      </footer>
+    </section>`;
+  }
+
   function coverPage(plan, state) {
-    const chips = [
-      chip("Strength"),
-      chip("Running"),
-      chip(plan.priority === "hyrox" ? "HYROX" : "Hybrid")
-    ].join("");
+    const chips = (plan.coverChips || [
+      "Strength",
+      "Running",
+      plan.priority === "hyrox" ? "HYROX" : plan.priority === "running" ? "Half marathon" : "Hybrid"
+    ]).map(chip).join("");
     const target = plan.intro || "";
     const rule = (plan.weeklyGuidance || []).join(" ");
     return `<section class="page page--cover">
@@ -232,21 +272,21 @@ window.EGPdf = (() => {
       <div class="page__in">
         <p class="kicker">${metaLine(plan, state)}</p>
         <i class="rule-line"></i>
-        <h1 class="cover-title">${esc(plan.title)}</h1>
+        <h1 class="cover-title${String(plan.title || "").length > 26 ? " cover-title--long" : ""}">${esc(plan.title)}</h1>
         <p class="cover-lead">${esc(plan.subtitle || "")}</p>
         <div class="chips">${chips}</div>
         <div class="pair">
           <article class="card">
-            <h2>Your 12-week target</h2>
+            <h2>${esc(plan.targetHeading || "Your 12-week target")}</h2>
             <p>${esc(target)}</p>
           </article>
           <article class="card">
-            <h2>The rule that matters</h2>
+            <h2>${esc(plan.ruleHeading || "The rule that matters")}</h2>
             <p>${esc(rule || "Keep easy sessions genuinely easy. Intensity only works when the easy work stays easy.")}</p>
           </article>
         </div>
         <article class="card card--structure">
-          <h2>Your weekly structure</h2>
+          <h2>${esc(plan.structureHeading || "Your weekly structure")}</h2>
           <ol class="structure">${structureRows(plan)}</ol>
         </article>
       </div>
@@ -257,8 +297,8 @@ window.EGPdf = (() => {
     </section>`;
   }
 
-  function zoneTiles() {
-    const zones = [
+  function zoneTiles(plan = {}) {
+    const zones = plan.zoneTiles || [
       ["Z1 Recovery", "Very easy"],
       ["Z2 Easy", "Full sentences"],
       ["Z3 Steady", "Short sentences"],
@@ -269,11 +309,11 @@ window.EGPdf = (() => {
     return `<div class="zgrid">${zones.map(([n, d]) => `<div><strong>${n}</strong><span>${d}</span></div>`).join("")}</div>`;
   }
 
-  function raceLoadCard() {
+  function raceLoadCard(plan = {}) {
     const race = window.EGRaceLoads?.category("men_open");
     if (!race) return "";
     return `<article class="card">
-      <h2>HYROX race load — Open Men</h2>
+      <h2>${esc(plan.raceLoadTitle || "HYROX race load — Open Men")}</h2>
       <div class="load-grid">
         <div><span>Sled Push</span><strong>${race.sledPushKg} kg total incl. sled</strong></div>
         <div><span>Sled Pull</span><strong>${race.sledPullKg} kg total incl. sled</strong></div>
@@ -287,10 +327,13 @@ window.EGPdf = (() => {
   }
 
   function guidePage(plan, state) {
-    const zonesLine = window.EGZones?.summarize(state?.runningZones)?.line
+    const zonesLine = plan.zonesLine
+      || window.EGZones?.summarize(state?.runningZones)?.line
       || "Use the Running Zones Calculator on the website before your first run. Train from your own Zone 1–5 values; do not copy another athlete’s pace.";
     const hasHyrox = plan.priority === "hyrox" || plan.sessions.some((s) => s.type === "hyrox");
     const race = window.EGRaceLoads?.category("men_open");
+    const warmupNote = plan.runWarmupNote
+      || "8–10 min easy Zone 1–2 before every run. Example only: an athlete might have Zone 2 around 5:30–6:15/km, Zone 3 around 5:00–5:30/km, Zone 4 around 4:35–5:00/km and a target 21.1 km pace around 4:45/km. Your calculator values always take priority.";
     const push = race?.sledPushKg || 152;
     const pull = race?.sledPullKg || 103;
     const refs = hasHyrox ? `<article class="card">
@@ -317,10 +360,14 @@ window.EGPdf = (() => {
           <article class="card">
             <h2>Running zones</h2>
             <p>${esc(zonesLine)}</p>
-            ${zoneTiles()}
-            ${callout("Run warm-up", "8–10 min easy Zone 1–2 before every run. Example only: an athlete might have Zone 2 around 5:30–6:15/km, Zone 3 around 5:00–5:30/km, Zone 4 around 4:35–5:00/km and a target 21.1 km pace around 4:45/km. Your calculator values always take priority.")}
+            ${zoneTiles(plan)}
+            ${callout("Run warm-up", warmupNote)}
           </article>
-          <article class="card">
+          ${plan.scaleCard ? `<article class="card">
+            <h2>${esc(plan.scaleCard.title)}</h2>
+            ${(plan.scaleCard.blocks || []).map((b) => `<p><strong>${esc(b.label)}</strong> ${esc(b.text)}</p>`).join("")}
+            ${plan.scaleCard.note ? callout(plan.scaleCard.noteLabel || "Rule", plan.scaleCard.note) : ""}
+          </article>` : `<article class="card">
             <h2>Gym notation</h2>
             <p><strong>3 × 8</strong> = 3 sets of 8 reps.</p>
             <p><strong>RIR</strong> — Repetitions In Reserve: how many clean reps you could still perform at the end of the set. 2 RIR = stop with about 2 good reps left.</p>
@@ -328,19 +375,19 @@ window.EGPdf = (() => {
             ${callout("%1RM", "%1RM is a starting estimate. RIR decides the real load. Example: Squat 1 × 6 | 2 RIR | ~80% 1RM. If your 1RM is 100 kg, start near 80 kg. If you finish 6 reps and could still do about 2 clean reps, the load is correct. If you have no reps left, reduce the weight.")}
             <p><strong>Top set:</strong> your heaviest work set for the day. <strong>Back-off sets:</strong> reduce the load slightly and complete the remaining sets at the prescribed RIR.</p>
             <p>For machines and isolation work, do not test a true 1RM. Use the percentage only as a reference and match the prescribed RIR.</p>
-          </article>
-          ${hasHyrox ? raceLoadCard() : ""}
+          </article>`}
+          ${hasHyrox ? raceLoadCard(plan) : ""}
           ${refs}
           <article class="card">
             <h2>Estimated training time</h2>
             <p>Every session shows a realistic time range. It includes a normal warm-up, planned rests and the main work.</p>
             <p>Example: 75–90 min means most athletes should complete the session inside that window. Extra equipment queues or long setup time are not included.</p>
           </article>
-          <article class="card">
-            <h2>Core work in the gym</h2>
-            <p>Every gym day ends with a short core finisher using 1–2 movements. The four exercises rotate: V-Ups, Front Plank, Side Plank and Dumbbell Side Bend.</p>
-            <p>Keep core reps controlled. The goal is trunk strength and stability, not turning the finisher into another conditioning workout.</p>
-          </article>
+          ${plan.scaleCard ? "" : `<article class="card">
+            <h2>${esc(plan.coreGuide?.title || "Core work in the gym")}</h2>
+            <p>${esc(plan.coreGuide?.lead || "Every gym day ends with a short core finisher using 1–2 movements. The four exercises rotate: V-Ups, Front Plank, Side Plank and Dumbbell Side Bend.")}</p>
+            <p>${esc(plan.coreGuide?.note || "Keep core reps controlled. The goal is trunk strength and stability, not turning the finisher into another conditioning workout.")}</p>
+          </article>`}
         </div>
       </div>
       <footer class="page__foot">
@@ -417,12 +464,56 @@ window.EGPdf = (() => {
       text-transform: uppercase;
       margin: 0 0 3mm;
     }
+    .cover-title--long { font-size: 15.5pt; line-height: .98; max-width: 118mm; }
     .cover-lead {
       font-size: 8.4pt;
       line-height: 1.35;
       max-width: 92mm;
       margin: 0 0 3.4mm;
     }
+    .page--strategy .cover-title { font-size: 18pt; margin: 0 0 2.2mm; }
+    .page--strategy .cover-lead { font-size: 7.4pt; max-width: 108mm; margin: 0 0 2.4mm; }
+    .page--strategy .chips { margin: 0 0 2.6mm; }
+    .page--strategy .card { padding: 2.2mm 2.6mm 2mm; }
+    .page--strategy .card h2 { margin: 0 0 1.2mm; }
+    .rule-list {
+      margin: 0;
+      padding: 0 0 0 3.6mm;
+      font-size: 6.6pt;
+      line-height: 1.32;
+    }
+    .rule-list li { margin: 0 0 0.85mm; padding-left: 0.4mm; }
+    .rule-list li:last-child { margin-bottom: 0; }
+    .split-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .split-table th, .split-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 1.05mm 1.2mm 1.05mm 0;
+      border-top: .2mm solid ${C.line};
+      font-size: 6.2pt;
+      line-height: 1.25;
+      color: ${C.charcoal};
+    }
+    .split-table thead th {
+      border-top: 0;
+      padding-top: 0;
+      font-size: 5.4pt;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: ${C.muted};
+      font-weight: 700;
+    }
+    .split-table tbody th {
+      width: 28mm;
+      font-size: 6.3pt;
+      font-weight: 700;
+      color: ${C.ink};
+      padding-right: 1.6mm;
+    }
+    .split-table tbody td:last-child { font-weight: 600; color: ${C.ink}; }
     .chips { display: flex; flex-wrap: wrap; gap: 1.6mm; margin: 0 0 4.2mm; }
     .chip {
       font-size: 6pt;
@@ -876,7 +967,7 @@ window.EGPdf = (() => {
       '<div class="chips">',
       caution ? `${caution}<div class="chips">` : '<div class="chips">'
     );
-    return shell(filename, `${cover}${guidePage(coverSource, { ...coverSource, ...state })}${weeks.map(weekPage).join("")}`);
+    return shell(filename, `${strategyPage(coverSource, { ...coverSource, ...state })}${cover}${guidePage(coverSource, { ...coverSource, ...state })}${weeks.map(weekPage).join("")}`);
   }
 
   function fillWindow(win, html, title) {

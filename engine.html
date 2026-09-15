@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#1F1A14" />
+  <title>Studio — EverydayGass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/studio.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body class="studio">
+  <header class="studio-bar">
+    <div>
+      <strong>EverydayGass Studio</strong>
+      <span>Internal use</span>
+    </div>
+    <div class="studio-bar__actions">
+      <button class="btn btn--sm" type="button" data-pdf-week style="background:#fff;color:#1f1a14;border-color:#fff">Week PDF</button>
+      <button class="btn btn--sm btn--ghost" type="button" data-pdf-block style="color:#fff;border-color:#fff">12-week PDF</button>
+    </div>
+  </header>
+
+  <div class="studio-shell">
+    <form class="studio-form" onsubmit="return false">
+      <h1>Client profile</h1>
+
+      <div class="studio-field">
+        <label for="clientName">Client</label>
+        <input id="clientName" name="clientName" type="text" autocomplete="off" placeholder="Name" />
+      </div>
+
+      <fieldset class="studio-field">
+        <legend>Focus</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="priority" data-value="running">Running</button>
+          <button type="button" class="pill" data-field="priority" data-value="strength">Strength</button>
+          <button type="button" class="pill is-on" data-field="priority" data-value="balanced">Balanced</button>
+          <button type="button" class="pill" data-field="priority" data-value="hyrox">HYROX</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Days / week</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="daysPerWeek" data-value="3">3</button>
+          <button type="button" class="pill is-on" data-field="daysPerWeek" data-value="4">4</button>
+          <button type="button" class="pill" data-field="daysPerWeek" data-value="5">5</button>
+          <button type="button" class="pill" data-field="daysPerWeek" data-value="6">6</button>
+          <button type="button" class="pill" data-field="daysPerWeek" data-value="7">7</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Level</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="level" data-value="beginner">Beginner</button>
+          <button type="button" class="pill is-on" data-field="level" data-value="intermediate">Intermediate</button>
+          <button type="button" class="pill" data-field="level" data-value="advanced">Advanced</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Running base</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="runningBase" data-value="new">New</button>
+          <button type="button" class="pill is-on" data-field="runningBase" data-value="5k">5K</button>
+          <button type="button" class="pill" data-field="runningBase" data-value="10k">10K</button>
+          <button type="button" class="pill" data-field="runningBase" data-value="endurance">Endurance</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Running goal</legend>
+        <div class="pills" data-running-goal></div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Strength</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="strengthBase" data-value="new">New</button>
+          <button type="button" class="pill is-on" data-field="strengthBase" data-value="some">Some</button>
+          <button type="button" class="pill" data-field="strengthBase" data-value="consistent">Consistent</button>
+          <button type="button" class="pill" data-field="strengthBase" data-value="advanced">Advanced</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Equipment</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="equipmentProfile" data-value="full_hyrox">Gym + HYROX</button>
+          <button type="button" class="pill is-on" data-field="equipmentProfile" data-value="gym_no_hyrox">Gym</button>
+          <button type="button" class="pill" data-field="equipmentProfile" data-value="minimal_home">Home</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Session length</legend>
+        <div class="pills">
+          <button type="button" class="pill" data-field="sessionMinutes" data-value="30">30</button>
+          <button type="button" class="pill" data-field="sessionMinutes" data-value="45">45</button>
+          <button type="button" class="pill is-on" data-field="sessionMinutes" data-value="60">60</button>
+          <button type="button" class="pill" data-field="sessionMinutes" data-value="75">75</button>
+          <button type="button" class="pill" data-field="sessionMinutes" data-value="90">90</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Constraints</legend>
+        <div class="pills">
+          <button type="button" class="pill is-on" data-field="hasConstraints" data-value="false">No</button>
+          <button type="button" class="pill" data-field="hasConstraints" data-value="true">Yes</button>
+        </div>
+        <div data-constraints hidden>
+          <div class="pills" style="margin-top:8px">
+            <button type="button" class="pill" data-field="constraintTags" data-value="impact">Impact</button>
+            <button type="button" class="pill" data-field="constraintTags" data-value="knee">Knee</button>
+            <button type="button" class="pill" data-field="constraintTags" data-value="hinge_back">Hinge / back</button>
+            <button type="button" class="pill" data-field="constraintTags" data-value="overhead">Overhead</button>
+            <button type="button" class="pill" data-field="constraintTags" data-value="other">Other</button>
+          </div>
+          <textarea name="constraintText" maxlength="160" placeholder="Optional note" style="margin-top:8px"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-field">
+        <legend>Week</legend>
+        <div class="pills">
+          <button type="button" class="pill is-on" data-field="week" data-value="1">1</button>
+          <button type="button" class="pill" data-field="week" data-value="2">2</button>
+          <button type="button" class="pill" data-field="week" data-value="3">3</button>
+          <button type="button" class="pill" data-field="week" data-value="4">4</button>
+          <button type="button" class="pill" data-field="week" data-value="5">5</button>
+          <button type="button" class="pill" data-field="week" data-value="6">6</button>
+          <button type="button" class="pill" data-field="week" data-value="7">7</button>
+          <button type="button" class="pill" data-field="week" data-value="8">8</button>
+          <button type="button" class="pill" data-field="week" data-value="9">9</button>
+          <button type="button" class="pill" data-field="week" data-value="10">10</button>
+          <button type="button" class="pill" data-field="week" data-value="11">11</button>
+          <button type="button" class="pill" data-field="week" data-value="12">12</button>
+        </div>
+      </fieldset>
+
+    </form>
+
+    <section class="studio-plan">
+      <div class="studio-plan__head">
+        <div>
+          <p class="eyebrow">Plan</p>
+          <h2 data-plan-title>Hybrid week</h2>
+          <div class="plan-meta" data-plan-meta></div>
+        </div>
+      </div>
+      <div data-overview></div>
+      <div class="week" data-week></div>
+    </section>
+  </div>
+
+  <script src="js/getPlanId.js"></script>
+  <script src="js/data/weeklyLayouts.js"></script>
+  <script src="js/data/hyroxRaceLoads.js"></script>
+  <script src="js/data/library.js"></script>
+  <script src="js/data/superFinalHyrox7.js"></script>
+  <script src="js/engine/engine.js"></script>
+  <script src="js/quiz/questions.js"></script>
+  <script src="js/ui/planView.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/studio.js"></script>
+</body>
+</html>
